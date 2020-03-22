@@ -1,0 +1,9 @@
+{
+  "name": "notandxor",
+  "version": "1.0.0",
+  "description": "The NotAndXor Blog",
+  "main": "index.js",
+  "author": "Nax",
+  "license": "UNLICENSED",
+  "private": true
+}
