@@ -1,0 +1,58 @@
+h1, h2, h3 {
+  font-family: var(--font-sans);
+  font-weight: bolder;
+  margin: 1em 0;
+  max-width: 75%;
+}
+
+h1 {
+  font-size: 1.75em;
+}
+
+h2 {
+  font-size: 1.50em;
+}
+
+h3 {
+  font-size: 1.25em;
+}
+
+sup {
+  font-size: 0.6em;
+  position: relative;
+  top: -0.5em;
+}
+
+aside {
+  width: 20%;
+  float: right;
+  clear: both;
+  font-size: 0.75em;
+  text-align: justify;
+}
+
+p {
+  width: 75%;
+  text-align: justify;
+  margin: 1em 0;
+}
+
+.small-caps {
+  font-size: 0.75em;
+  font-family: var(--font-sans);
+  font-variant-caps: small-caps;
+}
+
+@media screen and (max-width: 399px) {
+  p {
+    width: 100%;
+  }
+
+  h1, h2, h3 {
+    max-width: 100%;
+  }
+
+  .note-ref, aside {
+    display: none;
+  }
+}

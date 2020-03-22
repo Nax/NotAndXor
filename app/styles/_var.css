@@ -1,0 +1,17 @@
+:root {
+  --font-serif: "Times", "Times New Roman", serif;
+  --font-sans:  "Helvetica Neue", "Helvetica", "OpenSans", "Arial", sans-serif;
+  --font-mono:  "Courier New", "Courier", "Lucida Console", monospace;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  font-family: var(--font-serif);
+}
+
+body {
+  font-size: 125%;
+}

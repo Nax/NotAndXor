@@ -7,15 +7,28 @@
   "license": "UNLICENSED",
   "private": true,
   "scripts": {
-    "build": "cross-env NODE_ENV=production node ./build.js"
+    "build": "cross-env NODE_ENV=production node ./build.js",
+    "start": "cross-env NODE_ENV=development node ./build.js"
   },
+  "browserslist": [
+    "defaults"
+  ],
   "devDependencies": {
+    "browserslist": "^4.10.0",
     "cross-env": "^7.0.2",
+    "cssnano": "^4.1.10",
+    "express": "^4.17.1",
     "handlebars": "^4.7.3",
     "highlight.js": "^9.18.1",
     "html-minifier": "^4.0.0",
     "jsdom": "^16.2.1",
     "mkdirp": "^1.0.3",
+    "postcss": "^7.0.27",
+    "postcss-import": "^12.0.1",
+    "postcss-preset-env": "^6.7.0",
     "strip-indent": "^3.0.0"
+  },
+  "dependencies": {
+    "reset-css": "^5.0.1"
   }
 }
