@@ -1,0 +1,29 @@
+<!doctype html>
+<html>
+  <head>
+    <title>NotAndXot</title>
+    {{#if canonicalUrl}}
+      <link rel="canonical" href="{{canonicalUrl}}"/>
+    {{/if}}
+    {{#each scripts}}
+      <script defer="defer" src="{{this}}"></script>
+    {{/each}}
+    {{#each stylesheets}}
+      <link type="text/css" rel="stylesheet" href="{{this}}"/>
+    {{/each}}
+  </head>
+  <body>
+    <header class="header">
+      <h1><a href="/">Not And Xor</a></h1>
+    </header>
+    <main class="content">
+      {{> @partial-block }}
+    </main>
+    <footer class="footer">
+      <div class="copyright">
+        &copy; 2020 Maxime Bacoux<br>
+        All Rights Reserved.
+      </div>
+    </footer>
+  </body>
+</html>
