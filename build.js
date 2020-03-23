@@ -3,11 +3,11 @@ const path = require('path');
 const { promisify } = require('util');
 const hbs = require('handlebars');
 const mkdirp = require('mkdirp');
-const minifyHtml = require('html-minifier').minify;
 const rimraf = require('rimraf');
 
 const parsePost = require('./builder/parser');
 const buildCss = require('./builder/css');
+const buildHtml = require('./builder/html');
 const devServer = require('./builder/dev-server');
 
 const env = process.env.NODE_ENV || 'development';
@@ -21,6 +21,7 @@ class Builder {
   constructor() {
     this.templates = new Map();
     this.posts = new Map();
+    this.stylesheet = null;
   }
 
   async glob(dir, ext) {
@@ -48,10 +49,16 @@ class Builder {
     this.posts.set(post.slug, post);
   }
 
-  async emit(p, data) {
-    const { dir } = path.parse(p);
-    await mkdirp(dir);
-    await fs.promises.writeFile(p, data);
+  async buildCss() {
+    this.stylesheet = await buildCss('./app/index.css', './dist', dev ? 'app.css' : 'app.[hash].min.css');
+  }
+
+  async buildPost(post) {
+    await buildHtml(this.templates.get("post"), { post, stylesheets: [this.stylesheet] }, `./dist/${post.slug}/index.html`);
+  }
+
+  async watch() {
+    const watchers = [];
   }
 
   async run() {
@@ -63,29 +70,13 @@ class Builder {
 
     await Promise.all(templateFiles.map(x => this.parseTemplate(x)));
     await Promise.all(postFiles.map(x => this.parsePost(x)));
-
-    const stylesheet = await buildCss('./app/index.css', './dist', dev ? 'app.css' : 'app.[hash].min.css');
-
-    for (let post of this.posts.values()) {
-      const html = minifyHtml(
-        this.templates.get('post')({ post, stylesheets: [stylesheet] }), {
-          html5: true,
-          collapseBooleanAttributes: true,
-          collapseInlineTagWhitespace: true,
-          collapseWhitespace: true,
-          conservativeCollapse: true,
-          decodeEntities: true,
-          sortAttributes: true,
-          sortClassName: true
-        }
-      );
-      await this.emit(`./dist/${post.slug}/index.html`, html);
-    }
+    await this.buildCss();
+    await Promise.all(Array.from(this.posts.values()).map(x => this.buildPost(x)));
   }
 };
 
 const builder = new Builder;
-builder.run().then(() => console.log("Done"));
+builder.run();
 
 if (dev) {
   devServer();

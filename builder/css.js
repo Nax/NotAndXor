@@ -14,6 +14,6 @@ module.exports = async (src, outDir, outName) => {
     .use(cssnano())
     .process(stream, { from: src });
   outName = assetHash(outName, data.css);
-  await emit(`${outDir}/${outName}`, data);
+  await emit(`${outDir}/${outName}`, data.css);
   return `/${outName}`;
 };
