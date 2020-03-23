@@ -9,5 +9,6 @@
 
 .copyright {
   font-size: 0.75em;
+  font-family: var(--font-sans);
   text-align: center;
 }

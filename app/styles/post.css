@@ -40,7 +40,7 @@ p {
 .small-caps {
   font-size: 0.75em;
   font-family: var(--font-sans);
-  font-variant-caps: small-caps;
+  font-variant-caps: petite-caps;
 }
 
 @media screen and (max-width: 399px) {

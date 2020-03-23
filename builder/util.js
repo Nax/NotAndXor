@@ -11,7 +11,7 @@ module.exports.emit = async (p, data) => {
   const { dir } = path.parse(p);
   await mkdirp(dir);
   await fs.promises.writeFile(p, data);
-  console.log(c.bold.white('asset: ') + c.bold.green(p.padEnd(70)) + c.yellow.bold(`${bytes(data.length).padStart(6)}`));
+  console.log(c.bold.white('asset: ') + c.bold.green(p.padEnd(70)) + c.yellow.bold(`${bytes(data.length).padStart(7)}`));
 };
 
 module.exports.assetHash = (p, data) => {

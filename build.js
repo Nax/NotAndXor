@@ -8,6 +8,7 @@ const chokidar = require('chokidar');
 const parsePost = require('./builder/parser');
 const buildCss = require('./builder/css');
 const buildHtml = require('./builder/html');
+const buildFavicon = require('./builder/favicon');
 const devServer = require('./builder/dev-server');
 
 const env = process.env.NODE_ENV || 'development';
@@ -15,6 +16,7 @@ const dev = (env !== 'production');
 
 const DEST_DIR = './dist';
 const LIVERELOAD_SCRIPT = "document.write('<script src=\"http://' + (location.host || 'localhost').split(':')[0] + ':35729/livereload.js??snipver=1\"></' + 'script>');";
+const BASE_URL = dev ? 'http://localhost:8080' : 'https://nax.io';
 
 const rmdir = promisify(rimraf);
 
@@ -23,6 +25,7 @@ class Builder {
     this.templates = new Map();
     this.posts = new Map();
     this.stylesheet = null;
+    this.favicon = null;
   }
 
   async glob(dir, ext) {
@@ -55,26 +58,32 @@ class Builder {
     this.stylesheet = await buildCss('./app/index.css', './dist', dev ? 'app.css' : 'app.[hash].min.css');
   }
 
-  async buildPost(post) {
+  commonTemplateArgs(url) {
     const args = {
-      post,
-      stylesheets: [this.stylesheet]
+      stylesheets: [this.stylesheet],
+      favicon: this.favicon,
+      canonicalUrl: BASE_URL + url
     };
     if (dev) {
       args.scriptsInline = [LIVERELOAD_SCRIPT];
     }
+    return args;
+  }
+
+  async buildPost(post) {
+    const commonArgs = this.commonTemplateArgs(`/${post.slug}`);
+    const args = { ...commonArgs, post };
     await buildHtml(this.templates.get("post"), args, `./dist/${post.slug}/index.html`);
   }
 
   async buildPostIndex() {
-    const args = {
-      posts: Array.from(this.posts.values()),
-      stylesheets: [this.stylesheet]
-    };
-    if (dev) {
-      args.scriptsInline = [LIVERELOAD_SCRIPT];
-    }
+    const commonArgs = this.commonTemplateArgs('/');
+    const args = { ...commonArgs, posts: Array.from(this.posts.values()) };
     await buildHtml(this.templates.get("post-index"), args, `./dist/index.html`);
+  }
+
+  async buildFavicon() {
+    this.favicon = await buildFavicon('./app/favicon.png');
   }
 
   watch() {
@@ -110,6 +119,7 @@ class Builder {
     await Promise.all(templateFiles.map(x => this.parseTemplate(x)));
     await Promise.all(postFiles.map(x => this.parsePost(x)));
     await this.buildCss();
+    await this.buildFavicon();
     await Promise.all(Array.from(this.posts.values()).map(x => this.buildPost(x)));
     await this.buildPostIndex();
   }

@@ -14,6 +14,9 @@
     {{#each stylesheets}}
       <link type="text/css" rel="stylesheet" href="{{this}}"/>
     {{/each}}
+    {{#if favicon}}
+      {{{ favicon }}}
+    {{/if}}
   </head>
   <body>
     <header class="header">
@@ -24,8 +27,7 @@
     </main>
     <footer class="footer">
       <div class="copyright">
-        &copy; 2020 Maxime Bacoux<br>
-        All Rights Reserved.
+        &copy; 2020 Maxime Bacoux. Some rights reserved.
       </div>
     </footer>
   </body>
