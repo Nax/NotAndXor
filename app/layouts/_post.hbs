@@ -1,5 +1,10 @@
 <article class="post">
   <h1>{{ post.title }}</h1>
+  <div class="tags">
+    {{#each post.tags}}
+      <a class="tag" href="/tag/{{{this}}}">{{this}}</a>
+    {{/each}}
+  </div>
   {{#if preview}}
     {{{ post.htmlPreview }}}
     <a href="/{{{ post.slug }}}">Read more...</a>

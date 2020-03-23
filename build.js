@@ -32,6 +32,13 @@ const jsonld = (type, props) => JSON.stringify({
   ...ld(type, props)
 });
 
+const cmpPosts = (a, b) => {
+  if (a.date == b.date) {
+    return 0;
+  }
+  return (a.date > b.date) ? -1 : 1;
+}
+
 class Builder {
   constructor() {
     this.templates = new Map();
@@ -117,8 +124,24 @@ class Builder {
 
   async buildPostIndex() {
     const commonArgs = this.commonTemplateArgs('/');
-    const args = { ...commonArgs, ld: [this.ldBlog(null)], posts: Array.from(this.posts.values()) };
+    const args = { ...commonArgs, ld: [this.ldBlog(null)], posts: Array.from(this.posts.values()).sort(cmpPosts) };
     await buildHtml(this.templates.get("post-index"), args, `./dist/index.html`);
+  }
+
+  async buildPostIndexTag(tag) {
+    const commonArgs = this.commonTemplateArgs(`/tag/${tag}`);
+    const args = { ...commonArgs, ld: [this.ldBlog(null)], posts: Array.from(this.posts.values()).filter(x => x.tags.includes(tag)).sort(cmpPosts) };
+    await buildHtml(this.templates.get("post-index"), args, `./dist/tag/${tag}/index.html`);
+  }
+
+  async buildTags() {
+    const tags = new Set();
+    for (const p of this.posts.values()) {
+      for (const t of p.tags) {
+        tags.add(t);
+      }
+    }
+    await Promise.all(Array.from(tags.values()).map(t => this.buildPostIndexTag(t)));
   }
 
   async buildFavicon() {
@@ -163,6 +186,7 @@ class Builder {
     await this.buildFavicon();
     await Promise.all(Array.from(this.posts.values()).map(x => this.buildPost(x)));
     await this.buildPostIndex();
+    await this.buildTags();
     await Promise.all(staticFiles.map(x => this.buildStatic(x)));
   }
 };
