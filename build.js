@@ -79,6 +79,12 @@ class Builder {
       const post = await this.parsePost(p);
       await this.buildPost(post);
     }));
+
+    /* Watch for layout changes */
+    watchers.push(chokidar.watch(['./app/layouts'], { ignoreInitial: true }).on('all', async (event, p) => {
+      await this.parseTemplate(p);
+      await Promise.all(Array.from(this.posts.values()).map(x => this.buildPost(x)));
+    }));
   }
 
   async run() {
@@ -96,9 +102,9 @@ class Builder {
 };
 
 const builder = new Builder;
-builder.run();
-
-if (dev) {
-  builder.watch();
-  devServer();
-}
+builder.run().then(() => {
+  if (dev) {
+    builder.watch();
+    devServer();
+  }
+});
