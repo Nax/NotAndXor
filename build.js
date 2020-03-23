@@ -2,8 +2,8 @@ const fs = require('fs');
 const path = require('path');
 const { promisify } = require('util');
 const hbs = require('handlebars');
-const mkdirp = require('mkdirp');
 const rimraf = require('rimraf');
+const chokidar = require('chokidar');
 
 const parsePost = require('./builder/parser');
 const buildCss = require('./builder/css');
@@ -14,6 +14,7 @@ const env = process.env.NODE_ENV || 'development';
 const dev = (env !== 'production');
 
 const DEST_DIR = './dist';
+const LIVERELOAD_SCRIPT = "document.write('<script src=\"http://' + (location.host || 'localhost').split(':')[0] + ':35729/livereload.js??snipver=1\"></' + 'script>');";
 
 const rmdir = promisify(rimraf);
 
@@ -54,11 +55,23 @@ class Builder {
   }
 
   async buildPost(post) {
-    await buildHtml(this.templates.get("post"), { post, stylesheets: [this.stylesheet] }, `./dist/${post.slug}/index.html`);
+    const args = {
+      post,
+      stylesheets: [this.stylesheet]
+    };
+    if (dev) {
+      args.scriptsInline = [LIVERELOAD_SCRIPT];
+    }
+    await buildHtml(this.templates.get("post"), args, `./dist/${post.slug}/index.html`);
   }
 
-  async watch() {
+  watch() {
     const watchers = [];
+
+    /* Watch for CSS changes */
+    watchers.push(chokidar.watch(['./app/index.css', './app/styles'], { ignoreInitial: true }).on('all', async (event, p) => {
+      await this.buildCss();
+    }));
   }
 
   async run() {
@@ -79,5 +92,6 @@ const builder = new Builder;
 builder.run();
 
 if (dev) {
+  builder.watch();
   devServer();
 }

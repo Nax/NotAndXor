@@ -8,6 +8,9 @@
     {{#each scripts}}
       <script defer="defer" src="{{this}}"></script>
     {{/each}}
+    {{#each scriptsInline}}
+      <script>{{{this}}}</script>
+    {{/each}}
     {{#each stylesheets}}
       <link type="text/css" rel="stylesheet" href="{{this}}"/>
     {{/each}}
