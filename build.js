@@ -9,6 +9,7 @@ const parsePost = require('./builder/parser');
 const buildCss = require('./builder/css');
 const buildHtml = require('./builder/html');
 const buildFavicon = require('./builder/favicon');
+const buildStatic = require('./builder/static');
 const devServer = require('./builder/dev-server');
 
 const env = process.env.NODE_ENV || 'development';
@@ -29,7 +30,9 @@ class Builder {
   }
 
   async glob(dir, ext) {
-    return (await fs.promises.readdir(dir)).filter(x => x.endsWith('.' + ext)).map(x => path.resolve(`${dir}/${x}`));
+    const dirFiles = await fs.promises.readdir(dir);
+    const files = ext ? dirFiles.filter(x => x.endsWith('.' + ext)) : dirFiles;
+    return files.map(x => path.resolve(`${dir}/${x}`));
   }
 
   async parseTemplate(p) {
@@ -56,6 +59,10 @@ class Builder {
 
   async buildCss() {
     this.stylesheet = await buildCss('./app/index.css', './dist', dev ? 'app.css' : 'app.[hash].min.css');
+  }
+
+  async buildStatic(p) {
+    await buildStatic(p);
   }
 
   commonTemplateArgs(url) {
@@ -115,6 +122,7 @@ class Builder {
 
     const templateFiles = await this.glob('./app/layouts', 'hbs');
     const postFiles = await this.glob('./app/posts', 'xml');
+    const staticFiles = await this.glob('./app/static');
 
     await Promise.all(templateFiles.map(x => this.parseTemplate(x)));
     await Promise.all(postFiles.map(x => this.parsePost(x)));
@@ -122,6 +130,7 @@ class Builder {
     await this.buildFavicon();
     await Promise.all(Array.from(this.posts.values()).map(x => this.buildPost(x)));
     await this.buildPostIndex();
+    await Promise.all(staticFiles.map(x => this.buildStatic(x)));
   }
 };
 
