@@ -48,6 +48,7 @@ class Builder {
     const data = await fs.promises.readFile(p);
     const post = await parsePost(data);
     this.posts.set(post.slug, post);
+    return post;
   }
 
   async buildCss() {
@@ -71,6 +72,12 @@ class Builder {
     /* Watch for CSS changes */
     watchers.push(chokidar.watch(['./app/index.css', './app/styles'], { ignoreInitial: true }).on('all', async (event, p) => {
       await this.buildCss();
+    }));
+
+    /* Watch for post changes */
+    watchers.push(chokidar.watch(['./app/posts'], { ignoreInitial: true }).on('all', async (event, p) => {
+      const post = await this.parsePost(p);
+      await this.buildPost(post);
     }));
   }
 
