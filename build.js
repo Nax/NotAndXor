@@ -1,18 +1,21 @@
 const fs = require('fs');
 const path = require('path');
+const { promisify } = require('util');
 const hbs = require('handlebars');
 const mkdirp = require('mkdirp');
 const minifyHtml = require('html-minifier').minify;
-const postcss = require('postcss');
-const postcssImport = require('postcss-import');
-const postcssPresetEnv = require('postcss-preset-env');
-const cssnano = require('cssnano');
+const rimraf = require('rimraf');
 
 const parsePost = require('./builder/parser');
+const buildCss = require('./builder/css');
 const devServer = require('./builder/dev-server');
 
 const env = process.env.NODE_ENV || 'development';
 const dev = (env !== 'production');
+
+const DEST_DIR = './dist';
+
+const rmdir = promisify(rimraf);
 
 class Builder {
   constructor() {
@@ -51,29 +54,21 @@ class Builder {
     await fs.promises.writeFile(p, data);
   }
 
-  async buildCss() {
-    const p = './app/index.css';
-    const rawCss = await fs.promises.readFile(p);
-    const data = await postcss()
-      .use(postcssImport())
-      .use(postcssPresetEnv())
-      .use(cssnano())
-      .process(rawCss, { from: p });
-    this.emit('./dist/app.css', data);
-  }
-
   async run() {
+    /* Clean the build dir */
+    await rmdir(DEST_DIR);
+
     const templateFiles = await this.glob('./app/layouts', 'hbs');
     const postFiles = await this.glob('./app/posts', 'xml');
 
     await Promise.all(templateFiles.map(x => this.parseTemplate(x)));
     await Promise.all(postFiles.map(x => this.parsePost(x)));
 
-    await this.buildCss();
+    const stylesheet = await buildCss('./app/index.css', './dist', dev ? 'app.css' : 'app.[hash].min.css');
 
     for (let post of this.posts.values()) {
       const html = minifyHtml(
-        this.templates.get('post')({ post }), {
+        this.templates.get('post')({ post, stylesheets: [stylesheet] }), {
           html5: true,
           collapseBooleanAttributes: true,
           collapseInlineTagWhitespace: true,
