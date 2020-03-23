@@ -1,7 +1,12 @@
 <!doctype html>
 <html>
   <head>
-    <title>NotAndXor</title>
+    {{#if title}}
+      <title>{{title}} &mdash; Not And Xor</title>
+    {{/if}}
+    {{#unless title}}
+      <title>Not And Xor</title>
+    {{/unless}}
     {{#if canonicalUrl}}
       <link rel="canonical" href="{{canonicalUrl}}"/>
     {{/if}}
