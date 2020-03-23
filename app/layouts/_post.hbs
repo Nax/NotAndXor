@@ -1,0 +1,10 @@
+<article class="post">
+  <h1>{{ post.title }}</h1>
+  {{#if preview}}
+    {{{ post.htmlPreview }}}
+    <a href="/{{{ post.slug }}}">Read more...</a>
+  {{/if}}
+  {{#unless preview}}
+    {{{ post.html }}}
+  {{/unless}}
+</article>

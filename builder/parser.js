@@ -21,6 +21,7 @@ const parsePost = async post => {
   const slug = document.querySelector('slug').textContent;
   const date = document.querySelector('date').textContent;
   const html = transformHTML(document, false);
+  const htmlPreview = transformHTML(document, true);
 
   collapseWhitespace(document);
 
@@ -28,7 +29,8 @@ const parsePost = async post => {
     title,
     slug,
     xml: dom.serialize(),
-    html
+    html,
+    htmlPreview
   };
 };
 

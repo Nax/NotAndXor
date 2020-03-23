@@ -66,6 +66,17 @@ class Builder {
     await buildHtml(this.templates.get("post"), args, `./dist/${post.slug}/index.html`);
   }
 
+  async buildPostIndex() {
+    const args = {
+      posts: Array.from(this.posts.values()),
+      stylesheets: [this.stylesheet]
+    };
+    if (dev) {
+      args.scriptsInline = [LIVERELOAD_SCRIPT];
+    }
+    await buildHtml(this.templates.get("post-index"), args, `./dist/index.html`);
+  }
+
   watch() {
     const watchers = [];
 
@@ -78,12 +89,14 @@ class Builder {
     watchers.push(chokidar.watch(['./app/posts'], { ignoreInitial: true }).on('all', async (event, p) => {
       const post = await this.parsePost(p);
       await this.buildPost(post);
+      await this.buildPostIndex();
     }));
 
     /* Watch for layout changes */
     watchers.push(chokidar.watch(['./app/layouts'], { ignoreInitial: true }).on('all', async (event, p) => {
       await this.parseTemplate(p);
       await Promise.all(Array.from(this.posts.values()).map(x => this.buildPost(x)));
+      await this.buildPostIndex();
     }));
   }
 
@@ -98,6 +111,7 @@ class Builder {
     await Promise.all(postFiles.map(x => this.parsePost(x)));
     await this.buildCss();
     await Promise.all(Array.from(this.posts.values()).map(x => this.buildPost(x)));
+    await this.buildPostIndex();
   }
 };
 
