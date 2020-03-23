@@ -22,6 +22,16 @@ const BASE_URL = dev ? 'http://localhost:8080' : 'https://nax.io';
 
 const rmdir = promisify(rimraf);
 
+const ld = (type, props) => ({
+  "@type": type,
+  ...props
+});
+
+const jsonld = (type, props) => JSON.stringify({
+  "@context": "https://schema.org",
+  ...ld(type, props)
+});
+
 class Builder {
   constructor() {
     this.templates = new Map();
@@ -71,6 +81,21 @@ class Builder {
     this.javascript = await buildJavascript('./app/index.js', './dist', dev ? 'app.[ext]' : 'app.[hash].min.[ext]');
   }
 
+  ldBlog(post) {
+    return jsonld('Blog', {
+      name: "Not And Xor",
+      description: "A blog about computer science and software.",
+      url: "https://nax.io",
+      author: ld('Person', {
+        givenName: "Maxime",
+        familyName: "Bacoux",
+        gender: "Male",
+        jobTitle: "Computer Scientist",
+        nationality: "fr"
+      })
+    });
+  }
+
   commonTemplateArgs(url) {
     const args = {
       stylesheets: [this.stylesheet],
@@ -86,13 +111,13 @@ class Builder {
 
   async buildPost(post) {
     const commonArgs = this.commonTemplateArgs(`/${post.slug}`);
-    const args = { ...commonArgs, post };
+    const args = { ...commonArgs, ld: [this.ldBlog(post)], post };
     await buildHtml(this.templates.get("post"), args, `./dist/${post.slug}/index.html`);
   }
 
   async buildPostIndex() {
     const commonArgs = this.commonTemplateArgs('/');
-    const args = { ...commonArgs, posts: Array.from(this.posts.values()) };
+    const args = { ...commonArgs, ld: [this.ldBlog(null)], posts: Array.from(this.posts.values()) };
     await buildHtml(this.templates.get("post-index"), args, `./dist/index.html`);
   }
 
