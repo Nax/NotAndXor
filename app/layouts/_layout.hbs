@@ -10,8 +10,11 @@
     {{#if canonicalUrl}}
       <link rel="canonical" href="{{canonicalUrl}}"/>
     {{/if}}
-    {{#each scripts}}
-      <script defer="defer" src="{{this}}"></script>
+    {{#each javascript.scripts}}
+      <script nomodule defer="defer" src="{{this}}"></script>
+    {{/each}}
+    {{#each javascript.modules}}
+      <script type="module" defer="defer" src="{{this}}"></script>
     {{/each}}
     {{#each scriptsInline}}
       <script>{{{this}}}</script>

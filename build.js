@@ -10,6 +10,7 @@ const buildCss = require('./builder/css');
 const buildHtml = require('./builder/html');
 const buildFavicon = require('./builder/favicon');
 const buildStatic = require('./builder/static');
+const buildJavascript = require('./builder/javascript');
 const devServer = require('./builder/dev-server');
 
 const env = process.env.NODE_ENV || 'development';
@@ -26,6 +27,7 @@ class Builder {
     this.templates = new Map();
     this.posts = new Map();
     this.stylesheet = null;
+    this.javascript = { scripts: [], modules: [] };
     this.favicon = null;
   }
 
@@ -65,9 +67,14 @@ class Builder {
     await buildStatic(p);
   }
 
+  async buildJavascript() {
+    this.javascript = await buildJavascript('./app/index.js', './dist', dev ? 'app.[ext]' : 'app.[hash].min.[ext]');
+  }
+
   commonTemplateArgs(url) {
     const args = {
       stylesheets: [this.stylesheet],
+      javascript: this.javascript,
       favicon: this.favicon,
       canonicalUrl: BASE_URL + url
     };
@@ -127,6 +134,7 @@ class Builder {
     await Promise.all(templateFiles.map(x => this.parseTemplate(x)));
     await Promise.all(postFiles.map(x => this.parsePost(x)));
     await this.buildCss();
+    await this.buildJavascript();
     await this.buildFavicon();
     await Promise.all(Array.from(this.posts.values()).map(x => this.buildPost(x)));
     await this.buildPostIndex();
