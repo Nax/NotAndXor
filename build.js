@@ -4,6 +4,7 @@ const { promisify } = require('util');
 const hbs = require('handlebars');
 const rimraf = require('rimraf');
 const chokidar = require('chokidar');
+const strftime = require('strftime');
 
 const parsePost = require('./builder/parser');
 const buildCss = require('./builder/css');
@@ -19,6 +20,10 @@ const dev = (env !== 'production');
 const DEST_DIR = './dist';
 const LIVERELOAD_SCRIPT = "document.write('<script src=\"http://' + (location.host || 'localhost').split(':')[0] + ':35729/livereload.js??snipver=1\"></' + 'script>');";
 const BASE_URL = dev ? 'http://localhost:8080' : 'https://nax.io';
+
+hbs.registerHelper("date", function(date) {
+  return strftime("%B %d, %Y", new Date(date));
+});
 
 const rmdir = promisify(rimraf);
 

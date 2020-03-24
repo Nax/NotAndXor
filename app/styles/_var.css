@@ -2,6 +2,12 @@
   --font-serif: "Times", "Times New Roman", serif;
   --font-sans:  "Helvetica Neue", "Helvetica", "OpenSans", "Arial", sans-serif;
   --font-mono:  "Courier New", "Courier", "Lucida Console", monospace;
+
+  --color-black:      black;
+  --color-darkgray:   #222;
+  --color-gray:       #555;
+  --color-lightgray:  #eee;
+  --color-cyan:       hsl(215, 80%, 40%);
 }
 
 * {

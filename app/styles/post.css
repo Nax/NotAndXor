@@ -1,29 +1,29 @@
-h1, h2, h3 {
+.post h1, .post h2, .post h3 {
   font-family: var(--font-sans);
   font-weight: bolder;
-  margin: 1em 0;
+  margin-top: 2em;
   max-width: 75%;
 }
 
-h1 {
+.post h1 {
   font-size: 1.75em;
 }
 
-h2 {
+.post h2 {
   font-size: 1.50em;
 }
 
-h3 {
+.post h3 {
   font-size: 1.25em;
 }
 
-sup {
+.post sup {
   font-size: 0.6em;
   position: relative;
   top: -0.5em;
 }
 
-aside {
+.post aside {
   width: 20%;
   float: right;
   clear: both;
@@ -31,16 +31,42 @@ aside {
   text-align: justify;
 }
 
-p {
+.post p {
   width: 75%;
   text-align: justify;
   margin: 1em 0;
+}
+
+.post a {
+  color: var(--color-cyan);
+  text-decoration: none;
+}
+
+.post a:hover {
+  text-decoration: underline;
 }
 
 .small-caps {
   font-size: 0.75em;
   font-family: var(--font-sans);
   font-variant-caps: petite-caps;
+}
+
+.post-tags, .post-date {
+  font-size: 0.90em;
+  color: var(--color-gray);
+  font-family: var(--font-sans);
+  margin: 0.25em 0;
+}
+
+.post-tags ul {
+  display: inline-block;
+}
+
+.post-tags a {
+  text-decoration: underline;
+  text-transform: capitalize;
+  color: inherit;
 }
 
 @media screen and (max-width: 399px) {
