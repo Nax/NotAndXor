@@ -181,7 +181,7 @@ class Builder {
     await rmdir(DEST_DIR);
 
     const templateFiles = await this.glob('./app/layouts', 'hbs');
-    const postFiles = await this.glob('./app/posts', 'xml');
+    const postFiles = await this.glob('./app/posts', 'md');
     const staticFiles = await this.glob('./app/static');
 
     await Promise.all(templateFiles.map(x => this.parseTemplate(x)));

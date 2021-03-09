@@ -1,6 +1,6 @@
 const { rollup } = require('rollup');
-const babel = require('rollup-plugin-babel');
-const resolve = require('@rollup/plugin-node-resolve');
+const babel = require('@rollup/plugin-babel').default;
+const resolve = require('@rollup/plugin-node-resolve').default;
 const commonjs = require('@rollup/plugin-commonjs');
 const { terser } = require('rollup-plugin-terser');
 const { assetHash, emit } = require('./util');
@@ -10,7 +10,8 @@ module.exports = async (src, outDir, outName) => {
     input: src,
     plugins: [
       babel({
-        exclude: 'node_modules/**'
+        exclude: 'node_modules/**',
+        babelHelpers: 'bundled'
       }),
       resolve(),
       commonjs(),

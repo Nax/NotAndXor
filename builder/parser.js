@@ -1,40 +1,77 @@
 const { JSDOM } = require('jsdom');
-const transformHTML = require('./transform/html');
+const matter = require('gray-matter');
+const marked = require('marked');
 
-const collapseWhitespace = (node) => {
-  for(let n = 0; n < node.childNodes.length; n ++) {
-    const child = node.childNodes[n];
-    if (child.nodeType === 8 || (child.nodeType === 3 && !/\S/.test(child.nodeValue || ''))) {
-      node.removeChild(child);
-      n --;
-    } else if (child.nodeType === 1) {
-      collapseWhitespace(child);
-    }
-  }
+const findParentParagraph = (node) => {
+  if (node.tagName === 'p' || node.tagName === 'P')
+    return node;
+  return findParentParagraph(node.parentElement);
 }
 
+const transformSmallCaps = (document) => {
+  for (const e of document.getElementsByTagName('sc')) {
+    const n = document.createElement('span');
+    n.classList.add('small-caps');
+    n.innerHTML = e.innerHTML;
+    e.parentElement.replaceChild(n, e);
+  }
+};
+
+const transformNotes = (document, preview) => {
+  const notes = document.getElementsByTagName('note');
+
+  if (preview) {
+    for (const n of notes) {
+      n.remove();
+    }
+  } else {
+    for (let i = 0; i < notes.length; ++i) {
+      const note = notes[i];
+      const num = i + 1;
+      const name = note.attributes["name"] || num.toString();
+      const link = document.createElement('a');
+      link.href = `#${name}`;
+      link.text = name;
+      link.setAttribute('data-turbolinks', 'false');
+      const ref = document.createElement('sup');
+      ref.append(document.createTextNode('['));
+      ref.append(link);
+      ref.append(document.createTextNode(']'));
+      ref.classList.add('note-ref');
+      const aside = document.createElement('aside');
+      aside.innerHTML = note.innerHTML;
+      aside.prepend(document.createTextNode(`${num}. `));
+      aside.setAttribute('id', name);
+      findParentParagraph(note).prepend(aside);
+      note.parentElement.replaceChild(ref, note);
+    }
+  }
+};
+
+const transform = (data, preview) => {
+  const { document } = (new JSDOM(data)).window;
+
+  transformSmallCaps(document);
+  transformNotes(document, preview);
+
+  return document.body.innerHTML;
+};
+
 const parsePost = async post => {
-  const dom = new JSDOM(post, { contentType: 'application/xml' });
-  const { document } = dom.window;
+  const meta = matter(post);
+  const data = marked(meta.content);
+  const html = transform(data, false);
+  const htmlPreview = transform(data, true);
 
-  const title = document.querySelector('title').textContent;
-  const slug = document.querySelector('slug').textContent;
-  const date = document.querySelector('date').textContent;
-  const elTags = document.querySelector('tags');
-  const tags = elTags ? elTags.textContent.split(' ') : [];
-  const html = transformHTML(document, false);
-  const htmlPreview = transformHTML(document, true);
-
-  collapseWhitespace(document);
+  const { title, slug, date, tags } = meta.data;
 
   return {
     title,
     slug,
-    xml: dom.serialize(),
+    date,
+    tags,
     html,
     htmlPreview,
-    date,
-    tags
   };
 };
 
