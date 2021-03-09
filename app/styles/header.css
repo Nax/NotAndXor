@@ -1,16 +1,16 @@
 .header {
   display: flex;
   align-items: center;
-  padding-left: 2em;
+  justify-content: center;
   font-family: var(--font-sans);
-  height: 5em;
-  background: black;
+  height: 6em;
+  font-size: 1.6em;
   font-variant-caps: petite-caps;
   font-weight: lighter;
 }
 
 .header a {
-  color: white;
+  color: var(--color-fg);
   text-decoration: none;
 }
 

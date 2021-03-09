@@ -27,6 +27,8 @@
     "cssnano": "^4.1.10",
     "express": "^4.17.1",
     "favicons": "^6.2.1",
+    "glob": "^7.1.6",
+    "glob-promise": "^4.1.0",
     "gray-matter": "^4.0.2",
     "handlebars": "^4.7.7",
     "html-minifier": "^4.0.0",

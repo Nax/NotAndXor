@@ -5,6 +5,7 @@ const hbs = require('handlebars');
 const rimraf = require('rimraf');
 const chokidar = require('chokidar');
 const strftime = require('strftime');
+const glob = require('glob-promise');
 
 const parsePost = require('./builder/parser');
 const buildCss = require('./builder/css');
@@ -12,6 +13,7 @@ const buildHtml = require('./builder/html');
 const buildFavicon = require('./builder/favicon');
 const buildStatic = require('./builder/static');
 const buildJavascript = require('./builder/javascript');
+const buildSvg = require('./builder/svg');
 const devServer = require('./builder/dev-server');
 
 const env = process.env.NODE_ENV || 'development';
@@ -21,8 +23,14 @@ const DEST_DIR = './dist';
 const LIVERELOAD_SCRIPT = "document.write('<script src=\"http://' + (location.host || 'localhost').split(':')[0] + ':35729/livereload.js??snipver=1\"></' + 'script>');";
 const BASE_URL = dev ? 'http://localhost:8080' : 'https://nax.io';
 
+const assetsMap = new Map();
+
 hbs.registerHelper("date", function(date) {
   return strftime("%B %d, %Y", new Date(date));
+});
+
+hbs.registerHelper("asset", function(path) {
+  return assetsMap.get(path);
 });
 
 const rmdir = promisify(rimraf);
@@ -91,6 +99,11 @@ class Builder {
 
   async buildJavascript() {
     this.javascript = await buildJavascript('./app/index.js', './dist', dev ? 'app.[ext]' : 'app.[hash].min.[ext]');
+  }
+
+  async buildAsset(src) {
+    const dst = await buildSvg(src);
+    assetsMap.set(src, dst);
   }
 
   ldBlog(post) {
@@ -182,8 +195,10 @@ class Builder {
 
     const templateFiles = await this.glob('./app/layouts', 'hbs');
     const postFiles = await this.glob('./app/posts', 'md');
+    const assetsFiles = await glob('assets/**/*.svg');
     const staticFiles = await this.glob('./app/static');
 
+    await Promise.all(assetsFiles.map(x => this.buildAsset(x)));
     await Promise.all(templateFiles.map(x => this.parseTemplate(x)));
     await Promise.all(postFiles.map(x => this.parsePost(x)));
     await this.buildCss();
