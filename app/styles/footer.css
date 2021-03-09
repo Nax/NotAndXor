@@ -16,6 +16,8 @@
 
 .social img {
   height: 2em;
+  margin-left: 0.25em;
+  margin-right: 0.25em;
 }
 
 .social img:hover {
