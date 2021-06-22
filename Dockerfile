@@ -12,7 +12,7 @@ COPY docker-run.sh /usr/local/bin/
 COPY app ./app
 COPY assets ./assets
 COPY builder ./builder
-COPY babel.config.json build.js package.json yarn.lock ./
+COPY babel.config.json build.js nodemon.json package.json yarn.lock ./
 
 EXPOSE 8080
 

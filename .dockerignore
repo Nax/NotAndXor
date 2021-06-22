@@ -5,5 +5,6 @@
 !babel.config.json
 !build.js
 !docker-run.sh
+!nodemon.json
 !package.json
 !yarn.lock

@@ -9,8 +9,10 @@ services:
       - ./builder:/app/builder
       - ./babel.config.json:/app/babel.config.json
       - ./build.js:/app/build.js
+      - ./nodemon.json:/app/nodemon.json
       - ./package.json:/app/package.json
       - ./yarn.lock:/app/yarn.lock
+      - /app/dist
       - /app/node_modules
     ports:
       - '8080:8080'

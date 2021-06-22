@@ -1,0 +1,4 @@
+{
+  "watch": ["build.js", "builder/"],
+  "ext": "js"
+}

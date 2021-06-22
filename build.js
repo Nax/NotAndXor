@@ -1,8 +1,7 @@
 const fs = require('fs');
 const path = require('path');
-const { promisify } = require('util');
 const hbs = require('handlebars');
-const rimraf = require('rimraf');
+const rmrf = require('rmrf');
 const chokidar = require('chokidar');
 const strftime = require('strftime');
 const glob = require('glob-promise');
@@ -32,8 +31,6 @@ hbs.registerHelper("date", function(date) {
 hbs.registerHelper("asset", function(path) {
   return assetsMap.get(path);
 });
-
-const rmdir = promisify(rimraf);
 
 const ld = (type, props) => ({
   "@type": type,
@@ -190,8 +187,10 @@ class Builder {
   }
 
   async run() {
-    /* Clean the build dir */
-    await rmdir(DEST_DIR);
+    /* Clean the build dir (prod only) */
+    if (!dev) {
+      await rmrf(`${DEST_DIR}/*`, { glob: true });
+    }
 
     const templateFiles = await this.glob('./app/layouts', 'hbs');
     const postFiles = await this.glob('./app/posts', 'md');
