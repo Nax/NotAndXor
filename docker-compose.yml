@@ -6,7 +6,7 @@ services:
     volumes:
       - ./app:/app/app
       - ./assets:/app/assets
-      - ./builder:/app/builder
+      - ./src:/app/src
       - ./babel.config.json:/app/babel.config.json
       - ./build.js:/app/build.js
       - ./nodemon.json:/app/nodemon.json

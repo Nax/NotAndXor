@@ -2,7 +2,7 @@
   "name": "notandxor",
   "version": "1.0.0",
   "description": "The NotAndXor Blog",
-  "main": "index.js",
+  "main": "build.js",
   "author": "Nax",
   "license": "UNLICENSED",
   "private": true,

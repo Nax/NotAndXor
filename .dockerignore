@@ -1,7 +1,7 @@
 *
 !app
 !assets
-!builder
+!src
 !babel.config.json
 !build.js
 !docker-run.sh

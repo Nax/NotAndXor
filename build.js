@@ -6,14 +6,14 @@ const chokidar = require('chokidar');
 const strftime = require('strftime');
 const glob = require('glob-promise');
 
-const parsePost = require('./builder/parser');
-const buildCss = require('./builder/css');
-const buildHtml = require('./builder/html');
-const buildFavicon = require('./builder/favicon');
-const buildStatic = require('./builder/static');
-const buildJavascript = require('./builder/javascript');
-const buildSvg = require('./builder/svg');
-const devServer = require('./builder/dev-server');
+const parsePost = require('./src/parser');
+const buildCss = require('./src/css');
+const buildHtml = require('./src/html');
+const buildFavicon = require('./src/favicon');
+const buildStatic = require('./src/static');
+const buildJavascript = require('./src/javascript');
+const buildSvg = require('./src/svg');
+const devServer = require('./src/dev-server');
 
 const env = process.env.NODE_ENV || 'development';
 const dev = (env !== 'production');
