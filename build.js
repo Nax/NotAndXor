@@ -126,7 +126,7 @@ class Builder {
       stylesheets: [this.stylesheet],
       javascript: this.javascript,
       favicon: this.favicon,
-      canonicalUrl: BASE_URL + url
+      canonicalUrl: BASE_URL + (url === "/" ? "" : url)
     };
     if (dev) {
       args.scriptsInline = [LIVERELOAD_SCRIPT];

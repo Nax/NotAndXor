@@ -1,0 +1,16 @@
+version: '3.2'
+
+services:
+  app:
+    build: .
+    volumes:
+      - ./app:/app/app
+      - ./assets:/app/assets
+      - ./builder:/app/builder
+      - ./babel.config.json:/app/babel.config.json
+      - ./build.js:/app/build.js
+      - ./package.json:/app/package.json
+      - ./yarn.lock:/app/yarn.lock
+      - /app/node_modules
+    ports:
+      - '8080:8080'
