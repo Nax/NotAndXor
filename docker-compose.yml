@@ -5,7 +5,6 @@ services:
     build: .
     volumes:
       - ./app:/app/app
-      - ./assets:/app/assets
       - ./src:/app/src
       - ./babel.config.json:/app/babel.config.json
       - ./build.js:/app/build.js

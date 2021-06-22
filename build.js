@@ -99,8 +99,9 @@ class Builder {
   }
 
   async buildAsset(src) {
-    const dst = await buildSvg(src);
-    assetsMap.set(src, dst);
+    const name = src.replace(/^\.\/app\/assets\//, "");
+    const dst = await buildSvg(src, name);
+    assetsMap.set(name, dst);
   }
 
   ldBlog(post) {
@@ -194,7 +195,7 @@ class Builder {
 
     const templateFiles = await this.glob('./app/layouts', 'hbs');
     const postFiles = await this.glob('./app/posts', 'md');
-    const assetsFiles = await glob('assets/**/*.svg');
+    const assetsFiles = await glob('./app/assets/**/*.svg');
     const staticFiles = await this.glob('./app/static');
 
     await Promise.all(assetsFiles.map(x => this.buildAsset(x)));

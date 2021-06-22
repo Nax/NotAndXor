@@ -10,9 +10,9 @@ const dev = (env !== 'production');
 
 const { assetHash, emit } = require('./util');
 
-module.exports = async (src) => {
+module.exports = async (src, name) => {
   const data = await fs.promises.readFile(src);
-  let outName = dev ? src : '_assets/[hash].svg';
+  let outName = dev ? `_assets/${name}` : '_assets/[hash].svg';
   outName = assetHash(outName, data);
   await emit(`./dist/${outName}`, data);
   return `/${outName}`;

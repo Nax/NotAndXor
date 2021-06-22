@@ -10,7 +10,6 @@ RUN apk add --update --no-cache \
 
 COPY docker-run.sh /usr/local/bin/
 COPY app ./app
-COPY assets ./assets
 COPY src ./src
 COPY babel.config.json build.js nodemon.json package.json yarn.lock ./
 
