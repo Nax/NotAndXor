@@ -7,7 +7,7 @@ services:
       - ./app:/app/app
       - ./src:/app/src
       - ./babel.config.json:/app/babel.config.json
-      - ./build.js:/app/build.js
+      - ./index.js:/app/index.js
       - ./nodemon.json:/app/nodemon.json
       - ./package.json:/app/package.json
       - ./yarn.lock:/app/yarn.lock

@@ -11,7 +11,7 @@ RUN apk add --update --no-cache \
 COPY docker-run.sh /usr/local/bin/
 COPY app ./app
 COPY src ./src
-COPY babel.config.json build.js nodemon.json package.json yarn.lock ./
+COPY babel.config.json index.js nodemon.json package.json yarn.lock ./
 
 EXPOSE 8080
 

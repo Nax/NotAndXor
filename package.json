@@ -2,13 +2,13 @@
   "name": "notandxor",
   "version": "1.0.0",
   "description": "The NotAndXor Blog",
-  "main": "build.js",
+  "main": "index.js",
   "author": "Nax",
   "license": "UNLICENSED",
   "private": true,
   "scripts": {
-    "build": "cross-env NODE_ENV=production node ./build.js",
-    "start": "cross-env NODE_ENV=development nodemon ./build.js"
+    "build": "cross-env NODE_ENV=production node ./index.js",
+    "start": "cross-env NODE_ENV=development nodemon ./index.js"
   },
   "browserslist": [
     "defaults"

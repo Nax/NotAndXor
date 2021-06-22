@@ -1,9 +1,8 @@
 *
 !app
-!assets
 !src
 !babel.config.json
-!build.js
+!index.js
 !docker-run.sh
 !nodemon.json
 !package.json
