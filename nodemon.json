@@ -1,4 +1,4 @@
 {
-  "watch": ["build.js", "src/"],
+  "watch": ["index.js", "src/"],
   "ext": "js"
 }

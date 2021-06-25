@@ -1,0 +1,47 @@
+'use strict';
+
+const favicons = require('favicons');
+
+const conf = {
+  path: "/_favicon/",
+  appName: "NotAndXor",
+  appShortName: "NotAndXor",
+  appDescription: "A blog about computer science and software",
+  developerName: "Maxime Bacoux",
+  developerURL: "https://nax.io",
+  dir: "auto",
+  lang: "en-US",
+  background: "#fff",
+  theme_color: "#fff",
+  appleStatusBarStyle: "black-translucent",
+  display: "standalone",
+  orientation: "any",
+  scope: "/",
+  start_url: "/?homescreen=1",
+  version: "1.0",
+  logging: false,
+  pixel_art: false,
+  loadManifestWithCredentials: false,
+  icons: {
+    android: false,
+    appleIcon: false,
+    appleStartup: false,
+    coast: false,
+    favicons: true,
+    firefox: false,
+    windows: false,
+    yandex: false
+  }
+};
+
+module.exports = builder => builder.taskAny([], "app", "favicon.png", async (m) => {
+  return new Promise((resolve, reject) => {
+    favicons(m.fullpath, conf, (err, res) => {
+      if (err) return reject(err);
+
+      builder.data.favicon = res.html.join('');
+
+      return resolve([...res.images, ...res.files].map(x => ({ filename: '_favicon/' + x.name, data: x.contents })));
+    });
+  });
+});
