@@ -9,7 +9,7 @@ class File {
   }
 
   get fullpath() {
-    return `${this.prefix}/${this.path}`;
+    return [this.prefix, this.path].filter(x => !!x).join('/');
   }
 
   get mtime() {

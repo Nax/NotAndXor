@@ -1,7 +1,9 @@
 'use strict';
 
+const rmrf = require('rmfr');
+
 const Task = require('./task');
-const { emitFile } = require('./util2');
+const { emitFile } = require('./util');
 const devServer = require('./dev-server');
 
 class Builder {
@@ -12,16 +14,25 @@ class Builder {
     this.tasks = [];
     this.watch = opts.watch || false;
     this.devServer = opts.devServer || false;
+    this.dev = opts.dev || false;
+    this.clean = opts.clean || false;
   }
 
-  task(deps, prefix, pattern, cb) {
-    const t = new Task(this, deps, prefix, pattern, cb);
+  task(deps, prefix, pattern, func) {
+    if (!func) {
+      func = pattern;
+      pattern = prefix;
+      prefix = null;
+    }
+
+    if (!func) {
+      aFunc = pattern;
+      pattern = null;
+    }
+
+    const t = new Task(this, deps, prefix, pattern, func);
     this.tasks.push(t);
     return t;
-  }
-
-  taskAny(deps, prefix, pattern, cb) {
-    return this.task(deps, prefix, pattern, matches => Promise.all(matches.map(cb)));
   }
 
   emit(files) {
@@ -39,6 +50,11 @@ class Builder {
   }
 
   async run() {
+    if (this.clean) {
+      console.log("Cleaning ./dist");
+      await rmrf("./dist/*", { glob: true });
+    }
+
     await Promise.all(this.tasks.map(x => x.run()));
     if (this.watch) {
       this.tasks.forEach(x => x.watch());

@@ -34,14 +34,14 @@ class Task {
   }
 
   toFile(m) {
-    const p = m.substring(this.prefix.length + 1);
+    const p = this.prefix ? m.substring(this.prefix.length + 1) : m;
     return new File(this.prefix, p);
   }
 
   /* Called after the initial run - watches */
   watch() {
     if (this.prefix || this.pattern) {
-      const p = `${this.prefix}/${this.pattern}`;
+      const p = [this.prefix, this.pattern].filter(x => !!x).join('/');
       chokidar.watch([p], { ignoreInitial: true }).on('all', async (_, f) => {
         console.log("");
         await this._runWatch(f);
@@ -89,7 +89,7 @@ class Task {
       return this._runRaw(Promise.resolve([]));
     }
 
-    const p = `${this.prefix}/${this.pattern}`;
+    const p = [this.prefix, this.pattern].filter(x => !!x).join('/');
     return this._runRaw(glob(p));
   }
 
@@ -97,8 +97,10 @@ class Task {
   _runRaw(files) {
     return files
       .then(x => x.map(y => this.toFile(y)))
-      .then(this.cb)
+      .then(f => this.cb(f, this.builder))
   }
+
+
 };
 
 module.exports = Task;

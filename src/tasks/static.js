@@ -1,7 +1,7 @@
 'use strict';
 
-module.exports = builder => builder.task([], "app/static", "**.*", matches => Promise.all(matches.map(async (m) => {
-  const data = await m.read();
-  const filename = m.path;
+module.exports = () => files => Promise.all(files.map(async file => {
+  const data = await file.read();
+  const filename = file.path;
   return { filename, data };
-})));
+}));

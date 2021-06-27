@@ -34,9 +34,11 @@ const conf = {
   }
 };
 
-module.exports = builder => builder.taskAny([], "app", "favicon.png", async (m) => {
+module.exports = () => (files, builder) => {
+  const { fullpath } = files[0];
+
   return new Promise((resolve, reject) => {
-    favicons(m.fullpath, conf, (err, res) => {
+    favicons(fullpath, conf, (err, res) => {
       if (err) return reject(err);
 
       builder.data.favicon = res.html.join('');
@@ -44,4 +46,4 @@ module.exports = builder => builder.taskAny([], "app", "favicon.png", async (m) 
       return resolve([...res.images, ...res.files].map(x => ({ filename: '_favicon/' + x.name, data: x.contents })));
     });
   });
-});
+};

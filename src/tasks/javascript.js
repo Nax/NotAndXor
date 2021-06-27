@@ -6,23 +6,23 @@ const resolve = require('@rollup/plugin-node-resolve').default;
 const commonjs = require('@rollup/plugin-commonjs');
 const { terser } = require('rollup-plugin-terser');
 
-const { dev } = require('../config');
+const { replaceFilename } = require('../util');
 
-module.exports = builder => builder.task([], "app", "index.js", matches => Promise.all(matches.map(async (m) => {
+module.exports = opts => async (_, builder) => {
   if (!builder.data.javascript) {
     builder.data.javascript = {
-      scripts: new Set(),
-      modules: new Set(),
+      scripts: [],
+      modules: [],
     }
   }
 
-  const filenameScript = 'app.js';
-  const filenameModule = filenameScript.replace(/\.js$/, ".mjs");
+  let filenameScript = opts.filename;
+  let filenameModule = opts.filename;
 
-  const plugins = dev ? [] : [terser()];
+  const plugins = builder.dev ? [] : [terser()];
 
   const inputOptions = {
-    input: m.fullpath,
+    input: opts.entry,
     plugins: [
       babel({
         exclude: 'node_modules/**',
@@ -49,11 +49,14 @@ module.exports = builder => builder.task([], "app", "index.js", matches => Promi
   const outputScript = (await bundle.generate(outputOptions)).output[0];
   const outputModule = (await bundle.generate(outputOptionsModule)).output[0];
 
-  builder.data.javascript.scripts.add(`/${filenameScript}`);
-  builder.data.javascript.modules.add(`/${filenameModule}`);
+  filenameScript = replaceFilename(filenameScript, { ext: 'js', data: outputScript.code });
+  filenameModule = replaceFilename(filenameModule, { ext: 'mjs', data: outputModule.code });
+
+  builder.data.javascript.scripts = [`/${filenameScript}`];
+  builder.data.javascript.modules = [`/${filenameModule}`];
 
   return [
     { filename: filenameScript, data: outputScript.code },
     { filename: filenameModule, data: outputModule.code },
   ]
-})));
+};
