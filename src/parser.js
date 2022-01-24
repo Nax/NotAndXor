@@ -1,6 +1,6 @@
 const { JSDOM } = require('jsdom');
 const matter = require('gray-matter');
-const marked = require('marked');
+const { marked } = require('marked');
 
 const findParentParagraph = (node) => {
   if (node.tagName === 'p' || node.tagName === 'P')
