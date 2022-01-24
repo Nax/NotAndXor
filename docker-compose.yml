@@ -5,9 +5,7 @@ services:
     build: .
     volumes:
       - ./app:/app/app
-      - ./src:/app/src
-      - ./babel.config.json:/app/babel.config.json
-      - ./index.js:/app/index.js
+      - ./babel.config.js:/app/babel.config.js
       - ./nodemon.json:/app/nodemon.json
       - ./package.json:/app/package.json
       - ./yarn.lock:/app/yarn.lock

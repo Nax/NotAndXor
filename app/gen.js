@@ -1,15 +1,15 @@
 const env = process.env.NODE_ENV || 'development';
 const dev = (env !== 'production');
 
-const Builder = require('./src/build');
+const Builder = require('./gen/build');
 
-const static = require('./src/tasks/static');
-const assets = require('./src/tasks/assets');
-const css = require('./src/tasks/css');
-const favicon = require('./src/tasks/favicon');
-const javascript = require('./src/tasks/javascript');
-const layouts = require('./src/tasks/layouts');
-const posts = require('./src/tasks/posts');
+const static = require('./gen/tasks/static');
+const assets = require('./gen/tasks/assets');
+const css = require('./gen/tasks/css');
+const favicon = require('./gen/tasks/favicon');
+const javascript = require('./gen/tasks/javascript');
+const layouts = require('./gen/tasks/layouts');
+const posts = require('./gen/tasks/posts');
 
 const builder = new Builder({
   dev: dev,
