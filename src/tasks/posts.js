@@ -39,6 +39,7 @@ const html = (builder, layoutName, args) => {
       collapseBooleanAttributes: true,
       collapseInlineTagWhitespace: true,
       collapseWhitespace: true,
+      conservativeCollapse: true,
       decodeEntities: true,
       sortAttributes: true,
       sortClassName: true
