@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "noEmit": true,
+    "target": "esnext",
+    "module": "esnext",
+    "moduleResolution": "node",
+    "jsx": "preserve",
+    "esModuleInterop": true,
+    "types": ["webpack-env"],
+  },
+  "include": [
+    "./app/globals.d.ts",
+    "**/*.ts",
+    "**/*.tsx", "webpack.config.js",
+  ],
+  "exclude": [
+    "node_modules/**"
+  ]
+}
