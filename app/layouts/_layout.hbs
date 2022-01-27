@@ -27,22 +27,6 @@
     {{/if}}
   </head>
   <body>
-    <header class="header">
-      <h1><a href="/">Not And Xor</a></h1>
-    </header>
-    <main class="content">
-      {{> @partial-block }}
-    </main>
-    <footer class="footer">
-      <div class="social">
-        <a href="https://www.linkedin.com/in/mbacoux/"><img src="{{asset 'social/linkedin.svg'}}"/></a>
-        <a href="https://github.com/Nax"><img src="{{asset 'social/github.svg'}}"/></a>
-        <a href="https://twitter.com/nax_dev"><img src="{{asset 'social/twitter.svg'}}"/></a>
-      </div>
-      <div class="copyright">
-        &copy; 2013-2021 Maxime Bacoux. Some rights reserved.
-      </div>
-    </footer>
     {{#each ld}}
       <script type="application/ld+json">{{{this}}}</script>
     {{/each}}

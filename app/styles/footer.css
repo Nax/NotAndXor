@@ -14,12 +14,12 @@
   text-align: center;
 }
 
-.social img {
+.social svg {
   height: 2em;
   margin-left: 0.25em;
   margin-right: 0.25em;
 }
 
-.social img:hover {
+.social svg:hover {
   filter: invert(100%) brightness(20%);
 }

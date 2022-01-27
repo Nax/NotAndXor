@@ -53,6 +53,7 @@
 }
 
 .post-tags, .post-date {
+  display: inline;
   font-size: 0.90em;
   color: var(--color-gray);
   font-family: var(--font-sans);
