@@ -1,34 +1,51 @@
-const { JSDOM } = require('jsdom');
-const matter = require('gray-matter');
-const { marked } = require('marked');
+import { JSDOM } from 'jsdom';
+import matter from 'gray-matter';
+import { marked } from 'marked';
 
-const findParentParagraph = (node) => {
+export type Post = {
+  title: string;
+  slug: string;
+  date: Date;
+  tags: string[];
+  html: string;
+  htmlPreview: string;
+};
+
+const findParentParagraph = (node: Element): Element | null => {
   if (node.tagName === 'p' || node.tagName === 'P')
     return node;
-  return findParentParagraph(node.parentElement);
+  const parent = node.parentElement;
+  if (!parent) return null;
+  return findParentParagraph(parent);
 }
 
-const transformSmallCaps = (document) => {
-  for (const e of document.getElementsByTagName('sc')) {
+const transformSmallCaps = (document: Document) => {
+  const sc = document.getElementsByTagName('sc');
+  for (let i = 0; i < sc.length; ++i) {
+    const e = sc.item(i)!;
     const n = document.createElement('span');
     n.classList.add('small-caps');
     n.innerHTML = e.innerHTML;
-    e.parentElement.replaceChild(n, e);
+    const parent = e.parentElement;
+    if (parent) {
+      parent.replaceChild(n, e);
+    }
   }
 };
 
-const transformNotes = (document, preview) => {
+const transformNotes = (document: Document, preview: boolean) => {
   const notes = document.getElementsByTagName('note');
 
   if (preview) {
-    for (const n of notes) {
+    for (let i = 0; i < notes.length; ++i) {
+      const n = notes.item(i)!;
       n.remove();
     }
   } else {
     for (let i = 0; i < notes.length; ++i) {
       const note = notes[i];
       const num = i + 1;
-      const name = note.attributes["name"] || num.toString();
+      const name = note.attributes.getNamedItem('name')?.value || num.toString();
       const link = document.createElement('a');
       link.href = `#${name}`;
       link.text = name;
@@ -42,13 +59,19 @@ const transformNotes = (document, preview) => {
       aside.innerHTML = note.innerHTML;
       aside.prepend(document.createTextNode(`${num}. `));
       aside.setAttribute('id', name);
-      findParentParagraph(note).prepend(aside);
-      note.parentElement.replaceChild(ref, note);
+      const parentP = findParentParagraph(note);
+      if (parentP) {
+        parentP.prepend(aside);
+      }
+      const parent = note.parentElement;
+      if (parent) {
+        parent.replaceChild(ref, note);
+      }
     }
   }
 };
 
-const transform = (data, preview) => {
+const transform = (data: string, preview: boolean) => {
   const { document } = (new JSDOM(data)).window;
 
   transformSmallCaps(document);
@@ -57,7 +80,7 @@ const transform = (data, preview) => {
   return document.body.innerHTML;
 };
 
-const parsePost = async post => {
+export const parsePost = async (post: string | Buffer): Promise<Post> => {
   const meta = matter(post);
   const data = marked(meta.content);
   const html = transform(data, false);
@@ -75,4 +98,3 @@ const parsePost = async post => {
   };
 };
 
-module.exports = parsePost;

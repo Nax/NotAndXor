@@ -1,4 +1,4 @@
-FROM node:17.3.0-alpine
+FROM node:18-alpine
 
 WORKDIR /app
 
@@ -14,4 +14,4 @@ EXPOSE 8080
 EXPOSE 35729
 
 ENTRYPOINT []
-CMD ["/usr/local/sbin/docker-run.sh", "yarn", "start"]
+CMD ["/usr/local/sbin/docker-run.sh", "npm", "start"]

@@ -1,13 +1,13 @@
-const fs = require('fs');
-const path = require('path');
-const mkdirp = require('mkdirp');
-const bytes = require('bytes');
-const c = require('ansi-colors');
-const crypto = require('crypto');
+import fs from 'fs';
+import path from 'path';
+import mkdirp from 'mkdirp';
+import bytes from 'bytes';
+import c from 'ansi-colors';
+import crypto from 'crypto';
 
-module.exports = {};
+import { File, OutputFile } from './file';
 
-module.exports.emitFile = async (destDir, f) => {
+export const emitFile = async (destDir: string, f: OutputFile) => {
   const { filename, data } = f;
   const p = path.join(destDir, filename);
 
@@ -22,7 +22,7 @@ module.exports.emitFile = async (destDir, f) => {
   console.log(c.bold.green(filename.padEnd(70)) + c.yellow.bold(`${bytes(data.length).padStart(7)}`));
 };
 
-module.exports.replaceFilename = (pattern, args) => {
+export const replaceFilename = (pattern: string, args: { file?: File, ext?: string, name?: string, path?: string, data?: string | Buffer }) => {
   if (args.file) {
     args.ext ||= path.extname(args.file.path).substring(1);
     args.name ||= path.basename(args.file.path).split('.')[0];
@@ -30,12 +30,12 @@ module.exports.replaceFilename = (pattern, args) => {
   }
 
   return pattern
-    .replace(/\[ext\]/, args.ext)
-    .replace(/\[name\]/, args.name)
-    .replace(/\[path\]/, args.path)
+    .replace(/\[ext\]/, args.ext || '')
+    .replace(/\[name\]/, args.name || '')
+    .replace(/\[path\]/, args.path || '')
     .replace(/\[hash\]/, () => {
       const cipher = crypto.createHash('md5');
-      cipher.update(args.data);
+      cipher.update(args.data || Buffer.from([]));
       return cipher.digest('hex');
     });
 }

@@ -1,10 +1,11 @@
-'use strict';
+import path from 'path';
+import Handlebars from 'handlebars';
+import strftime from 'strftime';
+import { TaskFunc } from '../task';
+import { OutputFile } from '../file';
+import { Builder } from '../build';
 
-const path = require('path');
-const Handlebars = require('handlebars');
-const strftime = require('strftime');
-
-const hbsContext = builder => {
+const hbsContext = (builder: Builder) => {
   /* Returns the previous context if it exists */
   let hbs = builder.data.hbs;
   if (hbs)
@@ -15,18 +16,18 @@ const hbsContext = builder => {
   builder.data.hbs = hbs;
 
   /* Register hbs helpers */
-  hbs.registerHelper("date", function(date) {
+  hbs.registerHelper("date", function(date: string) {
     return strftime("%B %d, %Y", new Date(date));
   });
 
-  hbs.registerHelper("asset", function(path) {
+  hbs.registerHelper("asset", function(path: string) {
     return builder.data.assets.get(path);
   });
 
   return hbs;
 };
 
-module.exports = () => (files, builder) => Promise.all(files.map(async file => {
+export default (): TaskFunc => (files, builder) => Promise.all(files.map(async file => {
   const hbs = hbsContext(builder);
   let { name } = path.parse(file.fullpath);
 
@@ -41,6 +42,4 @@ module.exports = () => (files, builder) => Promise.all(files.map(async file => {
     builder.data.layouts ||= {};
     builder.data.layouts[name] = layout;
   }
-
-  return null;
-}));
+})).then(_ => []);

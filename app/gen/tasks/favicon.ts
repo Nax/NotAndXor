@@ -1,6 +1,5 @@
-'use strict';
-
-const favicons = require('favicons');
+import favicons from 'favicons';
+import { TaskFunc } from '../task';
 
 const conf = {
   path: "/_favicon/",
@@ -32,9 +31,9 @@ const conf = {
     windows: false,
     yandex: false
   }
-};
+} as const;
 
-module.exports = () => (files, builder) => {
+export default (): TaskFunc => (files, builder) => {
   const { fullpath } = files[0];
 
   return new Promise((resolve, reject) => {

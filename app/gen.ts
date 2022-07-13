@@ -1,15 +1,15 @@
 const env = process.env.NODE_ENV || 'development';
 const dev = (env !== 'production');
 
-const Builder = require('./gen/build');
+import { Builder } from './gen/build';
 
-const static = require('./gen/tasks/static');
-const assets = require('./gen/tasks/assets');
-const css = require('./gen/tasks/css');
-const favicon = require('./gen/tasks/favicon');
-const javascript = require('./gen/tasks/javascript');
-const layouts = require('./gen/tasks/layouts');
-const posts = require('./gen/tasks/posts');
+import staticFiles from './gen/tasks/static';
+import assets from './gen/tasks/assets';
+import css from './gen/tasks/css';
+import favicon from './gen/tasks/favicon';
+import javascript from './gen/tasks/javascript';
+import layouts from './gen/tasks/layouts';
+import posts from './gen/tasks/posts';
 
 const builder = new Builder({
   dev: dev,
@@ -26,38 +26,38 @@ const assetsTask = builder.task(
 
 const javascriptTask = builder.task(
   [],
-  "app/**/*.js",
+  null, "app/**/*.js",
   javascript({ entry: './app/index.js', filename: dev ? 'app.[ext]' : 'app.[hash].min.[ext]' })
 );
 
 const faviconTask = builder.task(
   [],
-  "app/favicon.png",
+  null, "app/favicon.png",
   favicon()
 );
 
 const cssTask = builder.task(
   [],
-  "app/**/*.css",
+  null, "app/**/*.css",
   css({ entry: './app/index.css', filename: dev ? 'app.css' : 'app.[hash].min.css' })
 );
 
 const layoutsTask = builder.task(
   [],
-  "app/layouts/*.hbs",
+  null, "app/layouts/*.hbs",
   layouts()
 );
 
 builder.task(
   [assetsTask, javascriptTask, faviconTask, cssTask, layoutsTask],
-  "app/posts/*.md",
+  null, "app/posts/*.md",
   posts()
 );
 
 builder.task(
   [],
   "app/static", "**.*",
-  static()
+  staticFiles()
 );
 
 builder.run();
