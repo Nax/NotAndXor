@@ -1,8 +1,11 @@
-import glob from 'glob-promise';
+import glob from 'glob';
 import chokidar from 'chokidar';
-import { File, OutputFile } from './file';
+import { promisify } from 'util';
 
+import { File, OutputFile } from './file';
 import type { Builder } from './build';
+
+const globPromise = promisify(glob);
 
 export type TaskFunc = (f: File[], b: Builder) => OutputFile | OutputFile[] | Promise<OutputFile | OutputFile[]>;
 
@@ -94,7 +97,8 @@ export class Task {
     }
 
     const p = [this.prefix, this.pattern].filter(x => !!x).join('/');
-    return this.runRaw(glob(p));
+
+    return this.runRaw(globPromise(p));
   }
 
   /* Runs the task */
