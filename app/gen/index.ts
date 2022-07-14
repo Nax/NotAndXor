@@ -1,15 +1,15 @@
 const env = process.env.NODE_ENV || 'development';
 const dev = (env !== 'production');
 
-import { Builder } from './gen/build';
+import { Builder } from './build';
 
-import staticFiles from './gen/tasks/static';
-import assets from './gen/tasks/assets';
-import css from './gen/tasks/css';
-import favicon from './gen/tasks/favicon';
-import javascript from './gen/tasks/javascript';
-import layouts from './gen/tasks/layouts';
-import posts from './gen/tasks/posts';
+import staticFiles from './tasks/static';
+import assets from './tasks/assets';
+import css from './tasks/css';
+import favicon from './tasks/favicon';
+import javascript from './tasks/javascript';
+import layouts from './tasks/layouts';
+import posts from './tasks/posts';
 
 const builder = new Builder({
   dev: dev,
@@ -26,8 +26,8 @@ const assetsTask = builder.task(
 
 const javascriptTask = builder.task(
   [],
-  null, "app/**/*.js",
-  javascript({ entry: './app/index.js', filename: dev ? 'app.[ext]' : 'app.[hash].min.[ext]' })
+  null, "app/src/*.ts",
+  javascript({ entry: './app/src/index.ts', filename: dev ? 'app.[ext]' : 'app.[hash].min.[ext]' })
 );
 
 const faviconTask = builder.task(
