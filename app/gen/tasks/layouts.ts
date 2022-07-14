@@ -1,8 +1,9 @@
 import path from 'path';
+import fs from 'fs';
 import Handlebars from 'handlebars';
 import strftime from 'strftime';
+
 import { TaskFunc } from '../task';
-import { OutputFile } from '../file';
 import { Builder } from '../build';
 
 const hbsContext = (builder: Builder) => {
@@ -22,6 +23,10 @@ const hbsContext = (builder: Builder) => {
 
   hbs.registerHelper("asset", function(path: string) {
     return builder.data.assets.get(path);
+  });
+
+  hbs.registerHelper("svg", function(path: string) {
+    return fs.readFileSync(__dirname + '/../../svg/' + path).toString();
   });
 
   return hbs;
