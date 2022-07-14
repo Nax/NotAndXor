@@ -1,5 +1,5 @@
 #!/bin/sh
 
-yarn
+npm i
 
 exec "$@"

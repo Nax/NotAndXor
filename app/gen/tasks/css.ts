@@ -1,14 +1,18 @@
-'use strict';
+import fs from 'fs';
+import postcss from 'postcss';
+import postcssImport from 'postcss-import';
+import postcssPresetEnv from 'postcss-preset-env';
+import cssnano from 'cssnano';
 
-const fs = require('fs');
-const postcss = require('postcss');
-const postcssImport = require('postcss-import');
-const postcssPresetEnv = require('postcss-preset-env');
-const cssnano = require('cssnano');
+import { TaskFunc } from '../task';
+import { replaceFilename } from '../util';
 
-const { replaceFilename } = require('../util');
+type CssOpts = {
+  entry: string;
+  filename: string;
+};
 
-module.exports = (opts) => async (_, builder) => {
+export default (opts: CssOpts): TaskFunc => async (_, builder) => {
   builder.data.css ||= new Set();
 
   const entry = opts.entry;
@@ -18,7 +22,7 @@ module.exports = (opts) => async (_, builder) => {
     .use(postcssImport())
     .use(postcssPresetEnv());
 
-  if (!builder.dev) {
+  if (!builder.opts.dev) {
     pipeline = pipeline.use(cssnano());
   }
 

@@ -1,14 +1,17 @@
-'use strict';
+import { rollup } from 'rollup';
+import babel from '@rollup/plugin-babel';
+import resolve from '@rollup/plugin-node-resolve';
+import commonjs from '@rollup/plugin-commonjs';
+import { terser } from 'rollup-plugin-terser';
 
-const { rollup } = require('rollup');
-const babel = require('@rollup/plugin-babel').default;
-const resolve = require('@rollup/plugin-node-resolve').default;
-const commonjs = require('@rollup/plugin-commonjs');
-const { terser } = require('rollup-plugin-terser');
+import { TaskFunc } from '../task';
+import { replaceFilename } from '../util';
 
-const { replaceFilename } = require('../util');
-
-module.exports = opts => async (_, builder) => {
+type JsOpts = {
+  entry: string;
+  filename: string;
+};
+export default (opts: JsOpts): TaskFunc => async (_, builder) => {
   if (!builder.data.javascript) {
     builder.data.javascript = {
       scripts: [],
@@ -19,7 +22,7 @@ module.exports = opts => async (_, builder) => {
   let filenameScript = opts.filename;
   let filenameModule = opts.filename;
 
-  const plugins = builder.dev ? [] : [terser()];
+  const plugins = builder.opts.dev ? [] : [terser()];
 
   const inputOptions = {
     input: opts.entry,
@@ -37,13 +40,13 @@ module.exports = opts => async (_, builder) => {
     file: filenameScript,
     format: 'iife',
     plugins
-  };
+  } as const;
 
   const outputOptionsModule = {
     file: filenameModule,
     format: 'es',
     plugins
-  };
+  } as const;
 
   const bundle = await rollup(inputOptions);
   const outputScript = (await bundle.generate(outputOptions)).output[0];

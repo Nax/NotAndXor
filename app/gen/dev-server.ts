@@ -1,7 +1,7 @@
-const express = require('express');
-const livereload = require('livereload');
+import express from 'express';
+import livereload from 'livereload';
 
-const devServer = () => {
+export const devServer = () => {
   const reloadServer = livereload.createServer({ usePolling: true });
   reloadServer.watch('./dist/');
 
@@ -12,5 +12,3 @@ const devServer = () => {
     console.log('Dev Server up and running on localhost:8080');
   });
 };
-
-module.exports = devServer;

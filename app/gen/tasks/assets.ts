@@ -1,8 +1,11 @@
-'use strict';
+import { TaskFunc } from '../task';
+import { replaceFilename } from '../util';
 
-const { replaceFilename } = require('../util');
+type AssetsOpts = {
+  filename: string;
+};
 
-module.exports = (opts) => (files, builder) => {
+export default (opts: AssetsOpts): TaskFunc => (files, builder) => {
   builder.data.assets ||= new Map();
 
   return Promise.all(files.map(async file => {

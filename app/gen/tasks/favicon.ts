@@ -1,6 +1,5 @@
-'use strict';
-
-const favicons = require('favicons');
+import favicons, { FaviconResponse } from 'favicons';
+import { TaskFunc } from '../task';
 
 const conf = {
   path: "/_favicon/",
@@ -32,18 +31,11 @@ const conf = {
     windows: false,
     yandex: false
   }
-};
+} as const;
 
-module.exports = () => (files, builder) => {
+export default (): TaskFunc => async (files, builder) => {
   const { fullpath } = files[0];
-
-  return new Promise((resolve, reject) => {
-    favicons(fullpath, conf, (err, res) => {
-      if (err) return reject(err);
-
-      builder.data.favicon = res.html.join('');
-
-      return resolve([...res.images, ...res.files].map(x => ({ filename: '_favicon/' + x.name, data: x.contents })));
-    });
-  });
+  const icons = (await favicons(fullpath, conf)) as FaviconResponse;
+  builder.data.favicon = icons.html.join('');
+  return [...icons.images, ...icons.files].map(x => ({ filename: '_favicon/' + x.name, data: x.contents as Buffer | string }));
 };
