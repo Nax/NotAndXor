@@ -1,110 +1,58 @@
-import glob from 'glob';
-import chokidar from 'chokidar';
-import { promisify } from 'util';
+export type TaskCallback<TInput, TOutput> = (s: Partial<TInput>) => TOutput | null | Promise<TOutput | null>;
+type TaskSubscription<TOutput> = (v: TOutput) => void;
 
-import { File, OutputFile } from './file';
-import type { Builder } from './build';
+export class TaskEntry<TOutput> {
+  private _subscribers: TaskSubscription<TOutput>[] = [];
 
-const globPromise = promisify(glob);
-
-export type TaskFunc = (f: File[], b: Builder) => OutputFile | OutputFile[] | Promise<OutputFile | OutputFile[]>;
-
-export class Task {
-  private next: Task[] = [];
-  private promise: Promise<null> | null = null;
-  private promiseDeps: Promise<OutputFile | OutputFile[]> | null = null;
-
-  constructor(
-    private builder: Builder,
-    private deps: Task[],
-    private prefix: string | null,
-    private pattern: string | null,
-    private cb: TaskFunc,
-  ) {
-    for (const d of deps) {
-      d.next.push(this);
-    }
+  subscribe(subscription: TaskSubscription<TOutput>) {
+    this._subscribers.push(subscription);
   }
 
-  run() {
-    if (!this.promise) {
-      this.promise = new Promise((resolve, reject) => {
-        this.runFirstDeps()
-          .then(x => this.builder.emit(x))
-          .then(_ => resolve(null))
-          .catch(e => reject(e));
-      });
-    }
-    return this.promise;
-  }
-
-  toFile(m: string) {
-    if (this.prefix) {
-      const p = this.prefix ? m.substring(this.prefix.length + 1) : m;
-      return new File(this.prefix, p);
-    } else {
-      return new File(m);
-    }
-  }
-
-  /* Called after the initial run - watches */
-  watch() {
-    if (this.prefix || this.pattern) {
-      const p = [this.prefix, this.pattern].filter(x => !!x).join('/');
-      chokidar.watch([p], { ignoreInitial: true }).on('all', async (_, f) => {
-        console.log("");
-        await this.runWatch(f);
-        await Promise.all(this.next.map(x => x.runWatchDep()));
-      });
-    }
-  }
-
-  /* Ran from being watched */
-  private runWatch(f: string) {
-    return new Promise((resolve, reject) => {
-      const p = this.runRaw(Promise.resolve([f]));
-      p.then(resolve);
-      p.then(this.builder.emit)
-        .catch(e => reject(e));
-    });
-  }
-
-  /* Ran from a deb being watched */
-  private async runWatchDep(): Promise<OutputFile | OutputFile[]> {
-    const files = await this.runRawGlob();
-    const p = (await Promise.all(this.next.map(x => x.runWatchDep()))).flat();
-    this.builder.emit(p);
-    return p;
-  }
-
-  /* First run - Ensure the deps are done and signal dep completion as well */
-  private runFirstDeps() {
-    if (!this.promiseDeps) {
-      this.promiseDeps = new Promise<OutputFile | OutputFile[]>((resolve, reject) => {
-        Promise.all(this.deps.map(x => x.runFirstDeps()))
-          .then(_ => this.runRawGlob())
-          .then(x => resolve(x))
-          .catch(e => reject(e));
-      });
-    }
-    return this.promiseDeps;
-  }
-
-  /* Runs the task from the given pattern */
-  private runRawGlob() {
-    if (!this.prefix && !this.pattern) {
-      return this.runRaw(Promise.resolve([]));
-    }
-
-    const p = [this.prefix, this.pattern].filter(x => !!x).join('/');
-
-    return this.runRaw(globPromise(p));
-  }
-
-  /* Runs the task */
-  private runRaw(files: Promise<string[]>) {
-    return files
-      .then(x => x.map(y => this.toFile(y)))
-      .then(f => this.cb(f, this.builder))
+  publish(v: TOutput) {
+    this._subscribers.forEach(subscriber => subscriber(v));
   }
 };
+
+export class Task<TInput, TOutput> {
+  private _callback: TaskCallback<TInput, TOutput>;
+  private _subscribers: TaskSubscription<TOutput>[] = [];
+  private _done: boolean = false;
+  private _doneCallback = () => {};
+  private _promise: Promise<void> | null = null;
+
+  constructor(subscription: {[K in keyof TInput]: (Task<any, TInput[K]> | TaskEntry<TInput[K]>)}, callback: TaskCallback<TInput, TOutput>) {
+    this._callback = callback;
+    for (const k in subscription) {
+      const t = subscription[k];
+      t.subscribe(v => this.run({ [k]: v } as any));
+    }
+  }
+
+  subscribe(subscriber: TaskSubscription<TOutput>): void {
+    this._subscribers.push(subscriber);
+  }
+
+  async run(diff: Partial<TInput>) {
+    const output = await this._callback(diff);
+    if (!output)
+      return null;
+    this._subscribers.forEach(subscriber => subscriber(output));
+    if (!this._done) {
+      this._done = true;
+      this._doneCallback();
+    }
+  }
+
+  promise() {
+    if (!this._promise) {
+      this._promise = new Promise(resolve => {
+        if (this._done) {
+          resolve();
+        } else {
+          this._doneCallback = () => { resolve(); };
+        }
+      });
+    }
+    return this._promise;
+  }
+}
