@@ -5,7 +5,7 @@ import bytes from 'bytes';
 import c from 'ansi-colors';
 import crypto from 'crypto';
 
-import { File, OutputFile } from './file';
+import { SourceFile, OutputFile } from './file';
 
 export const emitFile = async (destDir: string, f: OutputFile) => {
   const { filename, data } = f;
@@ -22,7 +22,7 @@ export const emitFile = async (destDir: string, f: OutputFile) => {
   console.log(c.bold.green(filename.padEnd(70)) + c.yellow.bold(`${bytes(data.length).padStart(7)}`));
 };
 
-export const replaceFilename = (pattern: string, args: { file?: File, ext?: string, name?: string, path?: string, data?: string | Buffer }) => {
+export const replaceFilename = (pattern: string, args: { file?: SourceFile, ext?: string, name?: string, path?: string, data?: string | Buffer }) => {
   if (args.file) {
     args.ext ||= path.extname(args.file.path).substring(1);
     args.name ||= path.basename(args.file.path).split('.')[0];
