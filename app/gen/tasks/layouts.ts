@@ -1,50 +1,20 @@
 import path from 'path';
-import fs from 'fs';
-import Handlebars from 'handlebars';
-import strftime from 'strftime';
 
-import { TaskFunc } from '../task';
-import { Builder } from '../build';
+import { Builder } from '../builder';
 
-const hbsContext = (builder: Builder) => {
-  /* Returns the previous context if it exists */
-  let hbs = builder.data.hbs;
-  if (hbs)
-    return hbs;
-
-  /* Create a brand new context */
-  hbs = Handlebars.create();
-  builder.data.hbs = hbs;
-
-  /* Register hbs helpers */
-  hbs.registerHelper("date", function(date: string) {
-    return strftime("%B %d, %Y", new Date(date));
+export type LayoutSet = {[k: string]: () => JSX.Element};
+export const layoutsTask = (builder: Builder, dir: string) => {
+  const files = builder.files(dir, '**/*.tsx');
+  return builder.task({ files }, ({ files }, next: (v: LayoutSet) => void) => {
+    if (!files) return;
+    const entries = Object.entries(files).map(([k, v]) => {
+      const basename = path.basename(k, '.tsx');
+      if (!v) return [basename, null];
+      const modulePath = require.resolve(path.resolve(dir, k));
+      delete require.cache[modulePath];
+      const module = require(modulePath);
+      return [basename, module.default];
+    });
+    next(Object.fromEntries(entries));
   });
-
-  hbs.registerHelper("asset", function(path: string) {
-    return builder.data.assets.get(path);
-  });
-
-  hbs.registerHelper("svg", function(path: string) {
-    return fs.readFileSync(__dirname + '/../../svg/' + path).toString();
-  });
-
-  return hbs;
 };
-
-export default (): TaskFunc => (files, builder) => Promise.all(files.map(async file => {
-  const hbs = hbsContext(builder);
-  let { name } = path.parse(file.fullpath);
-
-  const isPartial = (name[0] === '_');
-  const data = (await file.read()).toString();
-  const layout = hbs.compile(data);
-
-  if (isPartial) {
-    name = name.substring(1);
-    hbs.registerPartial(name, layout);
-  } else {
-    builder.data.layouts ||= {};
-    builder.data.layouts[name] = layout;
-  }
-})).then(_ => []);

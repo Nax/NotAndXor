@@ -1,15 +1,15 @@
 const env = process.env.NODE_ENV || 'development';
 const dev = (env !== 'production');
 
-import { Builder } from './build';
-
-import staticFiles from './tasks/static';
-import assets from './tasks/assets';
-import css from './tasks/css';
-import favicon from './tasks/favicon';
-import javascript from './tasks/javascript';
-import layouts from './tasks/layouts';
-import posts from './tasks/posts';
+import { Builder } from './builder';
+import { cssTask } from './tasks/css';
+import { postsTask } from './tasks/posts';
+import { staticTask } from './tasks/static';
+import { layoutsTask } from './tasks/layouts';
+import { blogTask } from './tasks/blog';
+import { rawTask } from './tasks/raw';
+import { faviconTask } from './tasks/favicon';
+import { javascriptTask } from './tasks/javascript';
 
 const builder = new Builder({
   dev: dev,
@@ -18,46 +18,17 @@ const builder = new Builder({
   clean: !dev,
 });
 
-const assetsTask = builder.task(
-  [],
-  "app/assets", "**/*.svg",
-  assets({ filename: dev ? '_assets/[path]/[name].[ext]' : '_assets/[hash].[ext]' })
-);
+const css = cssTask(builder, 'app/styles', { entry: 'index.css', filename: dev ? 'app.css' : 'app.[hash].min.css' });
+const posts = postsTask(builder, 'app/posts');
+const staticFiles = staticTask(builder, 'app/static');
+const layouts = layoutsTask(builder, 'app/layouts');
+const raw = rawTask(builder, 'app/raw');
+const favicon = faviconTask(builder, 'app/favicon.png');
+const js = javascriptTask(builder, 'app/src', { entry: 'index.ts', filename: dev ? 'app.[ext]' : 'app.[hash].min.[ext]' });
+const blog = blogTask(builder, { layouts, css, posts, raw, favicon, js });
 
-const javascriptTask = builder.task(
-  [],
-  null, "app/src/*.ts",
-  javascript({ entry: './app/src/index.ts', filename: dev ? 'app.[ext]' : 'app.[hash].min.[ext]' })
-);
-
-const faviconTask = builder.task(
-  [],
-  null, "app/favicon.png",
-  favicon()
-);
-
-const cssTask = builder.task(
-  [],
-  null, "app/**/*.css",
-  css({ entry: './app/index.css', filename: dev ? 'app.css' : 'app.[hash].min.css' })
-);
-
-const layoutsTask = builder.task(
-  [],
-  null, "app/layouts/*.hbs",
-  layouts()
-);
-
-builder.task(
-  [assetsTask, javascriptTask, faviconTask, cssTask, layoutsTask],
-  null, "app/posts/*.md",
-  posts()
-);
-
-builder.task(
-  [],
-  "app/static", "**.*",
-  staticFiles()
-);
-
-builder.run();
+builder.run().then(() => {
+  console.log("Done.");
+}).catch((err) => {
+  console.error(err);
+});

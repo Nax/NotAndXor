@@ -4,7 +4,7 @@ import postcssImport from 'postcss-import';
 import postcssPresetEnv from 'postcss-preset-env';
 import cssnano from 'cssnano';
 
-import { TaskFunc } from '../task';
+import { Builder } from '../builder';
 import { replaceFilename } from '../util';
 
 type CssOpts = {
@@ -12,27 +12,32 @@ type CssOpts = {
   filename: string;
 };
 
-export default (opts: CssOpts): TaskFunc => async (_, builder) => {
-  builder.data.css ||= new Set();
+export type CssSet = {[k: string]: string};
 
-  const entry = opts.entry;
+export const cssTask = (builder: Builder, dir: string, opts: CssOpts) => {
+  const files = builder.files(dir, '**/*.css');
+  return builder.task({ files }, ({ files }, next: (v: Promise<CssSet>) => void) => {
+    if (!files) return;
+    const promise = (async () => {
+      const src = [dir, opts.entry].join('/');
+      const stream = await fs.promises.readFile(src);
+      let pipeline = postcss()
+        .use(postcssImport())
+        .use(postcssPresetEnv());
 
-  const stream = await fs.promises.readFile(entry);
-  let pipeline = postcss()
-    .use(postcssImport())
-    .use(postcssPresetEnv());
+      if (!builder.opts.dev) {
+        pipeline = pipeline.use(cssnano());
+      }
+      const res = await pipeline
+        .process(stream, { from: src });
 
-  if (!builder.opts.dev) {
-    pipeline = pipeline.use(cssnano());
-  }
+      const data = res.css;
+      const filename = replaceFilename(opts.filename, { data });
 
-  const res = await pipeline
-    .process(stream, { from: entry });
+      await builder.emit({ filename, data });
 
-  const data = res.css;
-
-  const filename = replaceFilename(opts.filename, { data });
-  builder.data.css.add(`/${filename}`);
-
-  return { filename, data };
+      return {[src]: filename};
+    })();
+    next(promise);
+  });
 };

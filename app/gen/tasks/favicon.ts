@@ -1,5 +1,6 @@
 import favicons, { FaviconResponse } from 'favicons';
-import { TaskFunc } from '../task';
+
+import { Builder } from '../builder';
 
 const conf = {
   path: "/_favicon/",
@@ -33,9 +34,17 @@ const conf = {
   }
 } as const;
 
-export default (): TaskFunc => async (files, builder) => {
-  const { fullpath } = files[0];
-  const icons = (await favicons(fullpath, conf)) as FaviconResponse;
-  builder.data.favicon = icons.html.join('');
-  return [...icons.images, ...icons.files].map(x => ({ filename: '_favicon/' + x.name, data: x.contents as Buffer | string }));
+export const faviconTask = (builder: Builder, path: string) => {
+  const files = builder.files(path);
+  return builder.task({ files }, ({ files }, next: (v: Promise<string>) => void) => {
+    if (!files) return;
+    const promise = (async () => {
+      const icons = (await favicons(path, conf)) as FaviconResponse;
+      await Promise.all([...icons.images, ...icons.files].map((icon) => {
+        builder.emit({ filename: '_favicon/' + icon.name, data: icon.contents as Buffer | string });
+      }));
+      return icons.html.join('');
+    })();
+    next(promise);
+  });
 };

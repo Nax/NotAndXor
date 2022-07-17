@@ -1,15 +1,16 @@
 import fs from 'fs';
 
-export class File {
-  public prefix?: string;
+export class SourceFile {
+  public prefix: string | null;
   public path: string;
 
-  constructor(prefixOrPath: string, path?: string) {
-    if (path) {
-      this.prefix = prefixOrPath;
-      this.path = path;
+  constructor(prefix: string | null, path: string) {
+    if (prefix) {
+      this.prefix = prefix;
+      this.path = path.substring(prefix.length + 1);
     } else {
-      this.path = prefixOrPath;
+      this.prefix = null;
+      this.path = path;
     }
   }
 
@@ -30,3 +31,5 @@ export type OutputFile = {
   filename: string;
   data: string | Buffer;
 };
+
+export type SourceFileSet = {[k: string]: SourceFile | null};
