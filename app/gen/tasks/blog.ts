@@ -94,11 +94,11 @@ export const blogTask = (builder: Builder, sources: BlogInput) => {
 
   const makeBlogTag = (tag: string) => {
     const posts = Object.values(statePosts).filter(p => p.tags.includes(tag));
-    return render({ posts, preview: true, filename: `tag/${tag}/index.html`, ld: [ldBlog(null)] });
+    return render({ posts, preview: true, filename: `tag/${tag}.html`, ld: [ldBlog(null)] });
   };
 
   const makeBlogPost = (post: Post) => {
-    return render({ posts: [post], filename: `${post.slug}/index.html`, title: post.title, ld: [ldBlog(post)] });
+    return render({ posts: [post], filename: `${post.slug}.html`, title: post.title, ld: [ldBlog(post)] });
   };
 
   return builder.task(sources, ({ layouts, css, posts, raw, favicon, js }, next: (v: Promise<null>) => void) => {

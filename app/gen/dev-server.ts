@@ -6,7 +6,7 @@ export const devServer = () => {
   reloadServer.watch('./dist/');
 
   const app = express();
-  app.use(express.static('./dist'));
+  app.use(express.static('./dist', { extensions: ['html'] }));
 
   app.listen(8080, () => {
     console.log('Dev Server up and running on localhost:8080');
