@@ -33,6 +33,19 @@ const transformSmallCaps = (document: Document) => {
   }
 };
 
+const transformPreview = (document: Document, preview: boolean) => {
+  const pr = document.getElementsByTagName('preview').item(0);
+
+  if (!pr)
+    return;
+
+  if (preview) {
+    document.body.innerHTML = '<p>' + pr.innerHTML + '</p>';
+  } else {
+    pr.parentElement!.innerHTML = pr.innerHTML;
+  }
+};
+
 const transformNotes = (document: Document, preview: boolean) => {
   const notes = document.getElementsByTagName('note');
 
@@ -74,6 +87,7 @@ const transformNotes = (document: Document, preview: boolean) => {
 const transform = (data: string, preview: boolean) => {
   const { document } = (new JSDOM(data)).window;
 
+  transformPreview(document, preview);
   transformSmallCaps(document);
   transformNotes(document, preview);
 

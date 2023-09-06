@@ -2,7 +2,6 @@
   font-family: var(--font-sans);
   font-weight: bolder;
   margin-top: 2em;
-  max-width: 75%;
 }
 
 .post h1 {
@@ -24,7 +23,8 @@
 }
 
 .post aside {
-  width: 20%;
+  margin-right: -200px;
+  width: 200px;
   float: right;
   clear: both;
   font-size: 0.75em;
@@ -32,8 +32,9 @@
 }
 
 .post p {
-  width: 75%;
+  /* width: 75%; */
   text-align: justify;
+  line-height: 1.1em;
   margin: 1em 0;
 }
 
@@ -59,7 +60,7 @@
   margin: 0.25em 0;
 }
 
-.post-tags ul {
+.post-tags ul, .post-tags li {
   display: inline-block;
 }
 
@@ -67,9 +68,10 @@
   text-decoration: underline;
   text-transform: capitalize;
   color: inherit;
+  margin-right: 0.3em;
 }
 
-@media screen and (max-width: 399px) {
+@media screen and (max-width: 1024px) {
   p {
     width: 100%;
   }

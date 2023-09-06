@@ -62,7 +62,7 @@ export const blogTask = (builder: Builder, sources: BlogInput) => {
   const render = ({ posts, preview, filename, title, ld }: { posts: Post[], preview?: boolean, filename: string, title?: string, ld?: string[] }) => {
     const urlSuffix = filename === 'index.html' ? '' : filename.replace(/\/index.html$/, '').replace(/\.html$/, '');
     const canonical = ['https://nax.io', urlSuffix].filter(x => x).join('/');
-    const sortedPosts = posts.sort((a, b) => a.date >= b.date ? 1 : -1);
+    const sortedPosts = posts.sort((a, b) => a.date >= b.date ? -1 : 1);
     const postsElem = sortedPosts.map(post => React.createElement(Post!, { key: post.slug, preview, post }));
     const js = Object.values(stateJs).filter(x => /\.js$/.test(x));
     const jsModules = Object.values(stateJs).filter(x => /\.mjs$/.test(x));
