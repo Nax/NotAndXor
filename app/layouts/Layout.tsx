@@ -5,21 +5,19 @@ type LayoutsProps = {
   title?: string;
   css?: string[];
   js?: string[];
-  jsModules?: string[];
   jsInline?: string[];
   raw: {[k: string]: string};
   ld?: string[];
   favicon?: string;
   canonical?: string;
 };
-const Layout: React.FC<LayoutsProps> = ({ children, title, css, js, jsModules, jsInline, raw, ld, favicon, canonical }) => (
+const Layout: React.FC<LayoutsProps> = ({ children, title, css, js, jsInline, raw, ld, favicon, canonical }) => (
   <html lang='en-US'>
     <head>
       {css && css.map((href) => <link key={href} rel='stylesheet' href={'/' + href} />)}
       <title>{[title, 'Not And Xor'].filter(x => !!x).join(' — ')}</title>
       {favicon && <script dangerouslySetInnerHTML={{__html: `</script>${favicon}<script>`}}/>}
-      {js && js.map((href) => <script key={href} defer src={'/' + href} noModule/>)}
-      {jsModules && jsModules.map((href) => <script key={href} defer src={'/' + href} type='module'/>)}
+      {js && js.map((href) => <script key={href} defer src={'/' + href}/>)}
       {jsInline && jsInline.map((src) => <script key={src} dangerouslySetInnerHTML={{ __html: src }}/>)}
       {canonical && <link rel="canonical" href={canonical}/>}
     </head>

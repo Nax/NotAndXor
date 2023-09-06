@@ -65,8 +65,8 @@ export const blogTask = (builder: Builder, sources: BlogInput) => {
     const sortedPosts = posts.sort((a, b) => a.date >= b.date ? -1 : 1);
     const postsElem = sortedPosts.map(post => React.createElement(Post!, { key: post.slug, preview, post }));
     const js = Object.values(stateJs).filter(x => /\.js$/.test(x));
-    const jsModules = Object.values(stateJs).filter(x => /\.mjs$/.test(x));
-    const layoutsProps: any =  { title, raw: stateRaw, css: Object.values(stateCss), ld, js, jsModules, favicon: stateFavicon, canonical };
+    //const jsModules = Object.values(stateJs).filter(x => /\.mjs$/.test(x));
+    const layoutsProps: any =  { title, raw: stateRaw, css: Object.values(stateCss), ld, js, favicon: stateFavicon, canonical };
     if (builder.opts.devServer) {
       layoutsProps.jsInline = [LIVERELOAD_SCRIPT];
     }

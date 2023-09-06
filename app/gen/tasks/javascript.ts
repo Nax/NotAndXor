@@ -49,17 +49,17 @@ export const javascriptTask = (builder: Builder, dir: string, opts: JsOpts) => {
 
       const bundle = await rollup(inputOptions);
       const outputScript = (await bundle.generate(outputOptions)).output[0];
-      const outputModule = (await bundle.generate(outputOptionsModule)).output[0];
+      //const outputModule = (await bundle.generate(outputOptionsModule)).output[0];
 
       filenameScript = replaceFilename(filenameScript, { ext: 'js', data: outputScript.code });
-      filenameModule = replaceFilename(filenameModule, { ext: 'mjs', data: outputModule.code });
+      //filenameModule = replaceFilename(filenameModule, { ext: 'mjs', data: outputModule.code });
 
       await builder.emit({ filename: filenameScript, data: outputScript.code });
-      await builder.emit({ filename: filenameModule, data: outputModule.code });
+      //await builder.emit({ filename: filenameModule, data: outputModule.code });
 
       return {
         [opts.entry]: filenameScript,
-        [`${opts.entry} (.mjs)`]: filenameModule,
+        //[`${opts.entry} (.mjs)`]: filenameModule,
       };
     })();
     next(promise);
