@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import mkdirp from 'mkdirp';
+import { mkdirp } from 'mkdirp';
 import bytes from 'bytes';
 import c from 'ansi-colors';
 import crypto from 'crypto';

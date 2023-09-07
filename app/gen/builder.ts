@@ -1,16 +1,13 @@
 import fs from 'fs';
-import { promisify } from 'util';
 import { glob } from 'glob';
 import { Observable, Subject, merge, lastValueFrom } from 'rxjs';
 import { map, mergeMap, share } from 'rxjs/operators';
 import chokidar from 'chokidar';
-import rmrf from 'rimraf';
+import { rimraf } from 'rimraf';
 
 import { SourceFile, SourceFileSet, OutputFile } from './file';
 import { emitFile } from './util';
 import { devServer } from './dev-server';
-
-const globPromise = promisify(glob);
 
 type TaskState<T> = {[K in keyof T]: Observable<T[K]>};
 type TaskCallback<TInput, TOutput> = (v: Partial<TInput>, next: (v: TOutput | Promise<TOutput>) => void) => void;
@@ -65,7 +62,7 @@ export class Builder {
     const fullpath = [aPrefix, aPath].filter((x) => x).join('/');
     const subject = new Subject<SourceFileSet>();
     this._runCallbacks.push(async () => {
-      const files = (await globPromise(fullpath)).filter(x => fs.statSync(x).isFile());
+      const files = (await glob(fullpath)).filter(x => fs.statSync(x).isFile());
       const sourceFiles = files.map(x => new SourceFile(aPrefix, x));
       const set = Object.fromEntries(sourceFiles.map(x => [x.path, x] as const));
       subject.next(set);
@@ -106,12 +103,7 @@ export class Builder {
   async run() {
     if (this.opts.clean) {
       console.log("Cleaning ./dist");
-      await new Promise((resolve, reject) => {
-        rmrf("./dist/*", (err) => {
-          if (err) reject(err);
-          resolve(null);
-        });
-      });
+      await rimraf("./dist/*");
     }
 
     if (this.opts.devServer) {
