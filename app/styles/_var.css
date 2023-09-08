@@ -1,7 +1,7 @@
 :root {
   --font-serif: "Times", "Times New Roman", serif;
   --font-sans:  "Helvetica Neue", "Helvetica", "OpenSans", "Arial", sans-serif;
-  --font-mono:  "Courier New", "Courier", "Lucida Console", monospace;
+  --font-mono:  "Courier New";
 
   --color-bg: #f2f2f2;
   --color-fg: #141414;

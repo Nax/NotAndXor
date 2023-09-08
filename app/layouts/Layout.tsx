@@ -30,12 +30,10 @@ const Layout: React.FC<LayoutsProps> = ({ children, title, css, js, jsInline, ra
       </main>
       <footer className='footer'>
         <div className='social'>
-          <a href="https://www.linkedin.com/in/mbacoux/" dangerouslySetInnerHTML={{__html: raw['social/linkedin.svg']}}/>
           <a href="https://github.com/Nax" dangerouslySetInnerHTML={{__html: raw['social/github.svg']}}/>
-          <a href="https://twitter.com/NaxDotIO" dangerouslySetInnerHTML={{__html: raw['social/twitter.svg']}}/>
         </div>
         <div className='copyright'>
-          &copy; 2013-2022 Maxime Bacoux. Some rights reserved.
+          &copy; 2013-{new Date().getFullYear()} Maxime Bacoux. Some rights reserved.
         </div>
       </footer>
       {ld && ld.map((x, i) => <script key={i} type="application/ld+json" dangerouslySetInnerHTML={{__html: x}}/>)}

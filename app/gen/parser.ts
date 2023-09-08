@@ -1,9 +1,11 @@
 import { JSDOM } from 'jsdom';
 import matter from 'gray-matter';
 import { marked } from 'marked';
+import hljs from 'highlight.js';
 
 export type Post = {
   title: string;
+  subtitle?: string;
   slug: string;
   date: Date;
   tags: string[];
@@ -33,6 +35,13 @@ const transformSmallCaps = (document: Document) => {
   }
 };
 
+function transformCode(document: Document) {
+  const codeBlocks = Array.from(document.getElementsByTagName('code')).filter(x => x.parentElement?.tagName === 'PRE');
+  for (const el of codeBlocks) {
+    hljs.highlightElement(el);
+  }
+}
+
 const transformPreview = (document: Document, preview: boolean) => {
   const pr = document.getElementsByTagName('preview').item(0);
 
@@ -47,11 +56,11 @@ const transformPreview = (document: Document, preview: boolean) => {
 };
 
 const transformNotes = (document: Document, preview: boolean) => {
-  const notes = document.getElementsByTagName('note');
+  const notes = Array.from(document.getElementsByTagName('note'));
 
   if (preview) {
     for (let i = 0; i < notes.length; ++i) {
-      const n = notes.item(i)!;
+      const n = notes[i];
       n.remove();
     }
   } else {
@@ -74,7 +83,7 @@ const transformNotes = (document: Document, preview: boolean) => {
       aside.setAttribute('id', name);
       const parentP = findParentParagraph(note);
       if (parentP) {
-        parentP.prepend(aside);
+        parentP.before(aside);
       }
       const parent = note.parentElement;
       if (parent) {
@@ -89,6 +98,7 @@ const transform = (data: string, preview: boolean) => {
 
   transformPreview(document, preview);
   transformSmallCaps(document);
+  transformCode(document);
   transformNotes(document, preview);
 
   return document.body.innerHTML;
@@ -100,10 +110,11 @@ export const parsePost = async (post: string | Buffer): Promise<Post> => {
   const html = transform(data, false);
   const htmlPreview = transform(data, true);
 
-  const { title, slug, date, tags } = meta.data;
+  const { title, subtitle, slug, date, tags } = meta.data;
 
   return {
     title,
+    subtitle,
     slug,
     date,
     tags,
