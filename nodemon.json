@@ -1,4 +1,0 @@
-{
-  "watch": ["app/gen.ts", "app/gen/"],
-  "ext": "ts,js"
-}

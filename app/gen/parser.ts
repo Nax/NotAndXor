@@ -104,9 +104,9 @@ const transform = (data: string, preview: boolean) => {
   return document.body.innerHTML;
 };
 
-export const parsePost = async (post: string | Buffer): Promise<Post> => {
+export const parsePost = async (post: string): Promise<Post> => {
   const meta = matter(post);
-  const data = marked(meta.content);
+  const data = await marked(meta.content);
   const html = transform(data, false);
   const htmlPreview = transform(data, true);
 

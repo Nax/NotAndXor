@@ -11,7 +11,7 @@ export const postsTask = (builder: Builder, dir: string) => {
     for (const file of Object.values(files)) {
       if (!file) continue;
       const promise = file.read()
-      .then(raw => parsePost(raw))
+      .then(raw => parsePost(raw.toString('utf8')))
       .then(post => ({ [post.slug]: post }))
       promises.push(promise);
     }
