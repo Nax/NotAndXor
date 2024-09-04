@@ -93,7 +93,7 @@ export const blogTask = (builder: Builder, sources: BlogInput) => {
   };
 
   const makeBlogTag = (tag: string) => {
-    const posts = Object.values(statePosts).filter(p => p.tags.includes(tag));
+    const posts = Object.values(statePosts).filter(p => p.tags.map(x => x.toLowerCase()).includes(tag));
     return render({ posts, preview: true, filename: `tag/${tag}.html`, ld: [ldBlog(null)] });
   };
 
@@ -131,15 +131,15 @@ export const blogTask = (builder: Builder, sources: BlogInput) => {
     }
 
     if (posts) {
-      const oldTags = Object.keys(posts).map(x => statePosts[x]?.tags || []).flat();
-      const newTags = Object.values(posts).map(x => x.tags).flat();
+      const oldTags = Object.keys(posts).map(x => statePosts[x]?.tags || []).flat().map(x => x.toLowerCase());
+      const newTags = Object.values(posts).map(x => x.tags).flat().map(x => x.toLowerCase());
       statePosts = {...statePosts, ...posts};
       dirtyIndex = true;
       for (const k in posts) {
         dirtyPosts.add(k);
       }
       for (const tag of [...oldTags, ...newTags]) {
-        dirtyTags.add(tag);
+        dirtyTags.add(tag.toLowerCase());
       }
     }
 
@@ -159,7 +159,7 @@ export const blogTask = (builder: Builder, sources: BlogInput) => {
         dirtyPosts.add(k);
       }
       for (const tag of Object.values(statePosts).map(x => x.tags).flat()) {
-        dirtyTags.add(tag);
+        dirtyTags.add(tag.toLowerCase());
       }
     }
 

@@ -18,7 +18,7 @@ const Post: React.FC<PostProps> = ({ preview = false, post }) => (
       {post.tags &&
         <nav className='post-tags'>Tags:{" "}
           <ul>
-            {post.tags.map(tag => <li key={tag}><a className='post-tag' href={`/tag/${tag}`}>{tag}</a></li>)}
+            {post.tags.map(tag => <li key={tag}><a className='post-tag' href={`/tag/${tag.toLowerCase()}`}>{tag}</a></li>)}
           </ul>
         </nav>
       }
