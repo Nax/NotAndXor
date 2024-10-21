@@ -1,6 +1,5 @@
 import fs from 'fs';
 import path from 'path';
-import { mkdirp } from 'mkdirp';
 import bytes from 'bytes';
 import c from 'ansi-colors';
 import crypto from 'crypto';
@@ -13,13 +12,13 @@ export const emitFile = async (destDir: string, f: OutputFile) => {
 
   /* Make the directory */
   const { dir } = path.parse(p);
-  await mkdirp(dir);
+  await fs.promises.mkdir(dir, { recursive: true });
 
   /* Write the actual file */
   await fs.promises.writeFile(p, data);
 
   /* Log */
-  console.log(c.bold.green(filename.padEnd(70)) + c.yellow.bold(`${bytes(data.length).padStart(7)}`));
+  console.log(c.bold.green(filename.padEnd(70)) + c.yellow.bold(`${bytes(data.length).padStart(10)}`));
 };
 
 export const replaceFilename = (pattern: string, args: { file?: SourceFile, ext?: string, name?: string, path?: string, data?: string | Buffer }) => {
