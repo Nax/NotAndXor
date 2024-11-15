@@ -14,4 +14,4 @@ EXPOSE 8080
 EXPOSE 35729
 
 ENTRYPOINT []
-CMD ["/usr/local/sbin/docker-run.sh", "npm", "start"]
+CMD ["/usr/local/sbin/docker-run.sh", "pnpm", "start"]

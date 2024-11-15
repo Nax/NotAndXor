@@ -5,7 +5,7 @@ import commonjs from '@rollup/plugin-commonjs';
 import terser from '@rollup/plugin-terser';
 
 import { Builder } from '../builder';
-import { replaceFilename } from '../../gen/util';
+import { replaceFilename } from '../util';
 
 type JsOpts = {
   entry: string;

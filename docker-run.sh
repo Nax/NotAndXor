@@ -1,5 +1,5 @@
 #!/bin/sh
 
-npm i
+pnpm i
 
 exec "$@"

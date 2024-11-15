@@ -1,7 +1,7 @@
 import React from 'react';
 import strftime from 'strftime';
 
-import type { Post as PostData } from '../gen/parser';
+import type { Post as PostData } from '../../lib/parser';
 
 type PostProps = {
   preview: boolean;

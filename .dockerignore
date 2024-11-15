@@ -1,8 +1,9 @@
 *
 !app
+!lib
 !babel.config.js
 !docker-run.sh
 !nodemon.json
 !package.json
-!package-lock.json
+!pnpm-lock.yaml
 !tsconfig.json
