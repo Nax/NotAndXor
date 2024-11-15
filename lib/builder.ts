@@ -3,7 +3,6 @@ import { glob } from 'glob';
 import { Observable, Subject, merge, lastValueFrom } from 'rxjs';
 import { map, mergeMap, share } from 'rxjs/operators';
 import chokidar from 'chokidar';
-import { rimraf } from 'rimraf';
 
 import { SourceFile, SourceFileSet, OutputFile } from './file';
 import { emitFile } from './util';
@@ -103,7 +102,8 @@ export class Builder {
   async run() {
     if (this.opts.clean) {
       console.log("Cleaning ./dist");
-      await rimraf("./dist/*");
+      await fs.promises.rm("./dist/", { recursive: true, force: true });
+      await fs.promises.mkdir("./dist/", { recursive: true });
     }
 
     if (this.opts.devServer) {
