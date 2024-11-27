@@ -37,3 +37,8 @@ export async function getAllArticles(): Promise<ArticleData[]> {
   const articles = allArticles.map(makeArticle);
   return articles.sort((a, b) => b.date.getTime() - a.date.getTime());
 }
+
+export async function getAllArticlesSlugs(): Promise<string[]> {
+  const allArticles = await getAllArticlesModules();
+  return allArticles.map((article: any) => article.attributes.slug);
+}
