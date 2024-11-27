@@ -1,17 +1,11 @@
-import React from "react";
-import { Counter } from "./Counter.js";
+import React from 'react';
+import { useData } from 'vike-react/useData';
+import { ArticleData } from '../../database/article';
+import Article from '../../components/Article.server';
 
 export default function Page() {
-  return (
-    <>
-      <h1>My Vike app</h1>
-      This page is:
-      <ul>
-        <li>Rendered to HTML.</li>
-        <li>
-          Interactive. <Counter />
-        </li>
-      </ul>
-    </>
-  );
+  const articles = useData<ArticleData[]>();
+  return <>
+    {articles.map(x => <Article key={x.slug} article={x} preview={true}/>)}
+  </>
 }

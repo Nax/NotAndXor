@@ -1,8 +1,7 @@
 import "./style.css";
 
 import React from "react";
-import logoUrl from "../assets/logo.svg";
-import { Link } from "../components/Link.js";
+import { Link } from "../components/Link.server.jsx";
 
 export default function LayoutDefault({ children }: { children: React.ReactNode }) {
   return (
@@ -68,9 +67,6 @@ function Logo() {
         marginBottom: 10,
       }}
     >
-      <a href="/">
-        <img src={logoUrl} height={64} width={64} alt="logo" />
-      </a>
     </div>
   );
 }
