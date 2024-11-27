@@ -1,0 +1,144 @@
+.post-body h1, .post-body h2, .post-body h3 {
+  font-family: var(--font-sans);
+  font-weight: bolder;
+  margin-top: 2em;
+}
+
+.post-body h1 {
+  font-size: 1.75em;
+}
+
+.post-body h2 {
+  font-size: 1.50em;
+}
+
+.post-body h3 {
+  font-size: 1.25em;
+}
+
+.post-header h1 {
+  font-family: var(--font-sans);
+  font-weight: bolder;
+  font-size: 1.75em;
+}
+
+.post-header h2 {
+  font-family: var(--font-sans);
+  font-weight: normal;
+  font-size: 1.30em;
+}
+
+.post sup {
+  font-size: 0.6em;
+  position: relative;
+  top: -0.5em;
+}
+
+.post aside {
+  margin-right: -260px;
+  width: 200px;
+  float: right;
+  clear: both;
+  font-size: 0.75em;
+  text-align: justify;
+  margin-bottom: 2em;
+}
+
+.post p {
+  /* width: 75%; */
+  text-align: justify;
+  line-height: 1.1;
+  margin: 1em 0;
+}
+
+.post a {
+  color: var(--color-cyan);
+  text-decoration: none;
+}
+
+.post a:hover {
+  text-decoration: underline;
+}
+
+.small-caps {
+  font-size: 0.75em;
+  font-family: var(--font-sans);
+  font-variant-caps: petite-caps;
+}
+
+.post-tags, .post-date {
+  font-size: 0.90em;
+  color: var(--color-gray);
+  font-family: var(--font-sans);
+  margin: 0.25em 0;
+}
+
+.post-tags ul, .post-tags li {
+  display: inline-block;
+}
+
+.post-tags a {
+  text-decoration: underline;
+  text-transform: capitalize;
+  color: inherit;
+  margin-right: 0.3em;
+}
+
+@media screen and (max-width: 1350px) {
+  .post-body {
+    display: flex;
+    flex-direction: column;
+  }
+
+  p {
+    width: 100%;
+  }
+
+  h1, h2, h3 {
+    max-width: 100%;
+  }
+
+  .post aside {
+    order: 1;
+    width: 100%;
+    font-size: 0.8em;
+  }
+}
+
+code {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+}
+
+em {
+  font-style: italic;
+}
+
+strong {
+  font-weight: bold;
+}
+
+.post {
+  margin-bottom: 4em;
+}
+
+.post-title {
+  margin-bottom: 1em;
+}
+
+.post-body ul, .post-body ol {
+  margin: 1em 0;
+  padding-left: 1.5em;
+}
+
+.post-body ul {
+  list-style-type: disc;
+}
+
+.post-body ol {
+  list-style-type: decimal;
+}
+
+video {
+  width: 100%;
+}

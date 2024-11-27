@@ -1,0 +1,29 @@
+:root {
+  --font-serif: "Times", "Times New Roman", serif;
+  --font-sans:  "Helvetica Neue", "Helvetica", "OpenSans", "Arial", sans-serif;
+  --font-mono:  "Courier New";
+
+  --color-bg: #f2f2f2;
+  --color-fg: #141414;
+
+  --color-black:      black;
+  --color-darkgray:   #222;
+  --color-gray:       #555;
+  --color-lightgray:  #eee;
+  --color-cyan:       hsl(215, 80%, 40%);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  font-family: var(--font-serif);
+  background: var(--color-bg);
+  color: var(--color-fg);
+}
+
+body {
+  font-size: 125%;
+}
+

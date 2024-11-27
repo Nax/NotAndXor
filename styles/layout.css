@@ -1,0 +1,29 @@
+html {
+  scrollbar-gutter: stable both-edges;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.content {
+  width: 1024px;
+  flex: 1;
+  margin: 0 auto;
+  padding: 1em;
+}
+
+@media screen and (max-width: 1560px) {
+  .content {
+    margin-left: 1em;
+  }
+}
+
+@media screen and (max-width: 1024px) {
+  .content {
+    margin: 0 auto;
+    width: 90vw;
+  }
+}
