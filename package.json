@@ -25,6 +25,7 @@
     "@types/express": "^5.0.0",
     "@types/html-minifier": "^4.0.5",
     "@types/jsdom": "^21.1.7",
+    "@types/katex": "^0.16.7",
     "@types/livereload": "^0.9.5",
     "@types/lodash": "^4.17.13",
     "@types/node": "^22.9.0",
@@ -48,6 +49,7 @@
     "livereload": "^0.9.3",
     "lodash": "^4.17.21",
     "marked": "^15.0.0",
+    "marked-katex-extension": "^5.1.4",
     "postcss": "^8.4.49",
     "postcss-import": "^16.1.0",
     "postcss-preset-env": "^10.1.0",
@@ -63,6 +65,7 @@
   "dependencies": {
     "core-js": "^3.39.0",
     "highlight.js": "^11.10.0",
+    "katex": "^0.16.22",
     "regenerator-runtime": "^0.14.1",
     "reset-css": "^5.0.2",
     "turbolinks": "^5.2.0"

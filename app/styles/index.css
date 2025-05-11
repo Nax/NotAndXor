@@ -2,6 +2,7 @@
 
 @import "reset-css";
 @import "highlight.js/styles/base16/ia-dark.css";
+@import "katex/dist/katex.min.css";
 
 @import "./_var.css";
 

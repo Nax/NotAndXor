@@ -1,7 +1,10 @@
 import { JSDOM } from 'jsdom';
 import matter from 'gray-matter';
 import { marked } from 'marked';
+import markedKatex from 'marked-katex-extension';
 import hljs from 'highlight.js';
+
+marked.use(markedKatex({}));
 
 export type Post = {
   title: string;
