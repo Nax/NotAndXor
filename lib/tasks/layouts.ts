@@ -3,6 +3,7 @@ import path from 'path';
 import { Builder } from '../builder';
 
 export type LayoutSet = {[k: string]: () => JSX.Element};
+
 export const layoutsTask = (builder: Builder, dir: string) => {
   const files = builder.files(dir, '**/*.tsx');
   return builder.task({ files }, ({ files }, next: (v: LayoutSet) => void) => {

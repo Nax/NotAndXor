@@ -1,7 +1,7 @@
 import { Observable } from 'rxjs';
 import React from 'react';
 import ReactDOMServer from 'react-dom/server';
-import { isEqual } from 'lodash';
+import { isEqual } from 'lodash-es';
 import { minify } from 'html-minifier';
 
 import { Builder } from '../builder';

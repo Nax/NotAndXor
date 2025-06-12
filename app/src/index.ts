@@ -1,2 +1,2 @@
-import Turbolinks from 'turbolinks';
-Turbolinks.start();
+import { start as startTurbolinks } from 'turbolinks';
+startTurbolinks();

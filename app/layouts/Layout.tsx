@@ -17,7 +17,7 @@ const Layout: React.FC<LayoutsProps> = ({ children, title, css, js, jsInline, ra
       {css && css.map((href) => <link key={href} rel='stylesheet' href={'/' + href} />)}
       <title>{[title, 'Not And Xor'].filter(x => !!x).join(' — ')}</title>
       {favicon && <script dangerouslySetInnerHTML={{__html: `</script>${favicon}<script>`}}/>}
-      {js && js.map((href) => <script key={href} defer src={'/' + href}/>)}
+      {js && js.map((href) => <script key={href} type="module" src={'/' + href}/>)}
       {jsInline && jsInline.map((src) => <script key={src} dangerouslySetInnerHTML={{ __html: src }}/>)}
       {canonical && <link rel="canonical" href={canonical}/>}
     </head>

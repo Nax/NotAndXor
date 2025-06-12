@@ -19,7 +19,6 @@ export const javascriptTask = (builder: Builder, dir: string, opts: JsOpts) => {
     if (!files) return;
     const promise = (async () => {
       let filenameScript = opts.filename;
-      let filenameModule = opts.filename;
 
       const plugins = builder.opts.dev ? [] : [terser()];
 
@@ -37,29 +36,19 @@ export const javascriptTask = (builder: Builder, dir: string, opts: JsOpts) => {
 
       const outputOptions = {
         file: filenameScript,
-        format: 'iife',
-        plugins
-      } as const;
-
-      const outputOptionsModule = {
-        file: filenameModule,
-        format: 'es',
+        format: 'esm',
         plugins
       } as const;
 
       const bundle = await rollup(inputOptions);
       const outputScript = (await bundle.generate(outputOptions)).output[0];
-      //const outputModule = (await bundle.generate(outputOptionsModule)).output[0];
 
       filenameScript = replaceFilename(filenameScript, { ext: 'js', data: outputScript.code });
-      //filenameModule = replaceFilename(filenameModule, { ext: 'mjs', data: outputModule.code });
 
       await builder.emit({ filename: filenameScript, data: outputScript.code });
-      //await builder.emit({ filename: filenameModule, data: outputModule.code });
 
       return {
         [opts.entry]: filenameScript,
-        //[`${opts.entry} (.mjs)`]: filenameModule,
       };
     })();
     next(promise);
