@@ -18,7 +18,7 @@ export const emitFile = async (destDir: string, f: OutputFile) => {
   await fs.promises.writeFile(p, data);
 
   /* Log */
-  console.log(c.bold.green(filename.padEnd(70)) + c.yellow.bold(`${bytes(data.length).padStart(10)}`));
+  console.log(c.bold.green(filename.padEnd(70)) + c.yellow.bold(`${bytes(data.length)!.padStart(10)}`));
 };
 
 export const replaceFilename = (pattern: string, args: { file?: SourceFile, ext?: string, name?: string, path?: string, data?: string | Buffer }) => {

@@ -1,5 +1,5 @@
 import { Observable } from 'rxjs';
-import React from 'react';
+import React, { ReactElement } from 'react';
 import ReactDOMServer from 'react-dom/server';
 import { isEqual } from 'lodash-es';
 import { minify } from 'html-minifier';
@@ -48,8 +48,8 @@ type BlogInput = {
   js: Observable<JsSet>;
 };
 export const blogTask = (builder: Builder, sources: BlogInput) => {
-  let Layout: (() => JSX.Element) | null = null;
-  let Post: (() => JSX.Element) | null = null;
+  let Layout: (() => ReactElement) | null = null;
+  let Post: (() => ReactElement) | null = null;
   let stateCss: CssSet = {};
   let stateJs: JsSet = {};
   let statePosts: PostSet = {};
