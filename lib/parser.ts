@@ -74,7 +74,6 @@ const transformNotes = (document: Document, preview: boolean) => {
       const link = document.createElement('a');
       link.href = `#${name}`;
       link.text = name;
-      link.setAttribute('data-turbolinks', 'false');
       const ref = document.createElement('sup');
       ref.append(document.createTextNode('['));
       ref.append(link);

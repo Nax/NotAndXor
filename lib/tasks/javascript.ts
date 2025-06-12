@@ -17,6 +17,10 @@ export const javascriptTask = (builder: Builder, dir: string, opts: JsOpts) => {
   const files = builder.files(dir, '**/*.ts');
   return builder.task({ files }, ({ files }, next: (v: Promise<JsSet>) => void) => {
     if (!files) return;
+
+    /* REMOVE IF WE RE-ADD JAVASCRIPT */
+    return {};
+
     const promise = (async () => {
       let filenameScript = opts.filename;
 

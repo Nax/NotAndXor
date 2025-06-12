@@ -164,7 +164,7 @@ export const blogTask = (builder: Builder, sources: BlogInput) => {
     }
 
     const promises: Promise<any>[] = [];
-    if (Layout && Post && Object.keys(stateCss).length && Object.keys(stateJs).length && Object.keys(statePosts).length && Object.keys(stateRaw).length && stateFavicon) {
+    if (Layout && Post && Object.keys(stateCss).length /*&& Object.keys(stateJs).length*/ && Object.keys(statePosts).length && Object.keys(stateRaw).length && stateFavicon) {
       if (dirtyIndex) {
         promises.push(makeBlogIndex());
         dirtyIndex = false;
