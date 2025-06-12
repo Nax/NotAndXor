@@ -18,7 +18,7 @@ const builder = new Builder({
   clean: !dev,
 });
 
-const css = cssTask(builder, 'app/styles', { entry: 'index.css', filename: dev ? 'app.css' : 'app.[hash].min.css' });
+const css = cssTask(builder, 'app/index.css', { filename: dev ? 'app.css' : 'app.[hash].min.css' });
 const posts = postsTask(builder, 'app/posts');
 const staticFiles = staticTask(builder, 'app/static');
 const layouts = layoutsTask(builder, 'app/layouts');

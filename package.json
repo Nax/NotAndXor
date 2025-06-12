@@ -66,8 +66,8 @@
     "core-js": "^3.42.0",
     "highlight.js": "^11.11.1",
     "katex": "^0.16.22",
+    "modern-normalize": "^3.0.1",
     "regenerator-runtime": "^0.14.1",
-    "reset-css": "^5.0.2",
     "turbolinks": "^5.2.0"
   },
   "overrides": {
