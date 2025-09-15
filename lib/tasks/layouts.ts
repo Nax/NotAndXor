@@ -1,9 +1,9 @@
 import path from 'path';
-import { ReactElement } from 'react';
+import { ComponentType } from 'preact';
 
 import { Builder } from '../builder';
 
-export type LayoutSet = {[k: string]: () => ReactElement};
+export type LayoutSet = {[k: string]: () => ComponentType};
 
 export const layoutsTask = (builder: Builder, dir: string) => {
   const files = builder.files(dir, '**/*.tsx');

@@ -1,6 +1,7 @@
+import { h, ComponentType } from 'preact';
+import { render as preactRender } from 'preact-render-to-string';
+
 import { Observable } from 'rxjs';
-import React, { ReactElement } from 'react';
-import ReactDOMServer from 'react-dom/server';
 import { isEqual } from 'lodash-es';
 import { minify } from 'html-minifier';
 
@@ -48,8 +49,8 @@ type BlogInput = {
   js: Observable<JsSet>;
 };
 export const blogTask = (builder: Builder, sources: BlogInput) => {
-  let Layout: (() => ReactElement) | null = null;
-  let Post: (() => ReactElement) | null = null;
+  let Layout: (() => ComponentType) | null = null;
+  let Post: (() => ComponentType) | null = null;
   let stateCss: CssSet = {};
   let stateJs: JsSet = {};
   let statePosts: PostSet = {};
@@ -63,15 +64,15 @@ export const blogTask = (builder: Builder, sources: BlogInput) => {
     const urlSuffix = filename === 'index.html' ? '' : filename.replace(/\/index.html$/, '').replace(/\.html$/, '');
     const canonical = ['https://nax.io', urlSuffix].filter(x => x).join('/');
     const sortedPosts = posts.sort((a, b) => a.date >= b.date ? -1 : 1);
-    const postsElem = sortedPosts.map(post => React.createElement(Post!, { key: post.slug, preview, post }));
+    const postsElem = sortedPosts.map(post => h(Post!, { key: post.slug, preview, post }));
     const js = Object.values(stateJs).filter(x => /\.js$/.test(x));
     //const jsModules = Object.values(stateJs).filter(x => /\.mjs$/.test(x));
     const layoutsProps: any =  { title, raw: stateRaw, css: Object.values(stateCss), ld, js, favicon: stateFavicon, canonical };
     if (builder.opts.devServer) {
       layoutsProps.jsInline = [LIVERELOAD_SCRIPT];
     }
-    const layout = React.createElement(Layout!, layoutsProps, postsElem);
-    let data = '<!doctype html>' + ReactDOMServer.renderToString(layout).replaceAll(/<script><\/script>/g, '');
+    const layout = h(Layout!, layoutsProps, postsElem);
+    let data = '<!doctype html>' + preactRender(layout).replaceAll(/<script><\/script>/g, '');
     if (!builder.opts.dev) {
       data = minify(data, {
         html5: true,
