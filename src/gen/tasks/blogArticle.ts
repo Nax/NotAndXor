@@ -28,10 +28,34 @@ async function buildArticleAssets(builder: Builder, article: Article): Promise<O
 export async function buildBlogArticle(builder: Builder, article: Article, pageData: PageData): Promise<OutputFile> {
   const assets = await buildArticleAssets(builder, article);
   const assetsMap = new Map(assets.map(a => [a.source!, '/' + a.name]));
+  const canonicalUrl = CONFIG.baseUrl + '/' + article.slug;
 
   pageData = cloneDeep(pageData);
-  pageData.canonicalUrl = CONFIG.baseUrl + '/' + article.slug;
+  pageData.canonicalUrl = canonicalUrl;
   pageData.title = article.title + ' - ' + pageData.title;
+  pageData.meta.push({ property: 'og:title', content: article.title });
+  pageData.meta.push({ property: 'og:type', content: 'article' });
+  pageData.meta.push({ property: 'og:url', content: canonicalUrl });
+  pageData.meta.push({ name: 'description', content: article.description });
+  pageData.meta.push({ property: 'article:published_time', content: article.date.toISOString() });
+  pageData.meta.push({ property: 'article:section', content: 'Technology' });
+  pageData.meta.push({ property: 'article:author', content: CONFIG.baseUrl });
+  pageData.meta.push({ property: 'article:publisher', content: CONFIG.baseUrl });
+
+  pageData.meta.push({ name: 'twitter:title', content: article.title });
+  pageData.meta.push({ name: 'twitter:description', content: article.description });
+
+  pageData.ld.push({
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "headline": article.title,
+    "description": article.description,
+    "author": CONFIG.ldAuthor,
+    "datePublished": article.date.toISOString(),
+    "dateCreated": article.date.toISOString(),
+    "url": canonicalUrl,
+    "inLanguage": "en-US",
+  });
 
   const html = await article.html(assetsMap);
   const data = renderHtml(PageArticle, { article, html }, pageData);

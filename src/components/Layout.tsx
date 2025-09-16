@@ -24,16 +24,33 @@ type LayoutProps = {
 
 export function Layout({ data, children }: LayoutProps) {
   const year = new Date().getFullYear();
+  const htmlNs = {"xmlns:og": "http://ogp.me/ns#"};
+
+  const ldWebsite = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "url": CONFIG.baseUrl,
+    "name": CONFIG.siteName,
+    "author": CONFIG.ldAuthor,
+  };
+
+  const ldWebPage = {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "url": data.canonicalUrl,
+    "name": data.title,
+    "author": CONFIG.ldAuthor,
+  };
 
   return (
-    <html lang='en-US'>
+    <html lang='en-US' {...htmlNs}>
       <head>
         <meta charSet='utf-8'/>
         <meta name='viewport' content='width=device-width, initial-scale=1'/>
-        <meta name='description' content={CONFIG.siteDescription}/>
         {data.canonicalUrl && <link rel='canonical' href={data.canonicalUrl}/>}
         <title>{data.title}</title>
         <link rel='stylesheet' href={`/${data.css}`}/>
+        {data.meta.map((m, i) => <meta key={i} name={m.name} property={m.property} content={m.content}/>)}
       </head>
       <head dangerouslySetInnerHTML={{ __html: data.favicons.join('') }}/>
       <body>
@@ -51,6 +68,11 @@ export function Layout({ data, children }: LayoutProps) {
           </div>
           <p>&copy; 2013 - {year} Maxime Bacoux.<br/>Some rights reserved.</p>
         </footer>
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(ldWebsite) }}/>
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(ldWebPage) }}/>
+        {data.ld.map((ldItem, i) => (
+          <script key={i} type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(ldItem) }}/>
+        ))}
       </body>
     </html>
   );

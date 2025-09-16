@@ -5,9 +5,17 @@ export type OutputFile = {
   mimeType?: string;
 };
 
+type PageDataMeta = {
+  name?: string;
+  property?: string;
+  content: string;
+};
+
 export type PageData = {
   favicons: string[];
   title: string;
   css: string;
   canonicalUrl?: string;
+  meta: PageDataMeta[];
+  ld: any[];
 };

@@ -4,6 +4,7 @@ type Config = {
   baseUrl: string;
   siteName: string;
   siteDescription: string;
+  ldAuthor: any;
 };
 
 const dev = process.env.NODE_ENV !== 'production';
@@ -16,4 +17,8 @@ export const CONFIG: Config = {
   baseUrl: baseUrl,
   siteName: 'NotAndXor',
   siteDescription: 'A blog about modding Zelda games and other fun endeavors.',
+  ldAuthor: {
+    "@type": "Person",
+    "name": "Maxime Bacoux",
+  }
 };
