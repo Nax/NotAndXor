@@ -1,9 +1,0 @@
-*
-!app
-!lib
-!babel.config.js
-!docker-run.sh
-!nodemon.json
-!package.json
-!pnpm-lock.yaml
-!tsconfig.json
