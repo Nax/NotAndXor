@@ -1,27 +1,33 @@
 import path from 'node:path';
 import fs from 'node:fs/promises';
 import matter from 'gray-matter';
+import { marked } from 'marked';
+import { articleHtml } from './parser';
 
 export type Article = {
+  dir: string;
   title: string;
   description: string;
   slug: string;
   date: Date;
   tags: string[];
+  html: string;
 };
 
 async function makeArticle(dir: string): Promise<Article> {
-  const file = path.resolve(__dirname, '..', dir, 'article.md');
+  const fullDir = path.resolve(__dirname, '..', dir);
+  const file = path.resolve(fullDir, 'article.md');
   const fileData = await fs.readFile(file, 'utf-8');
-  const { data } = matter(fileData);
+  const { data, content } = matter(fileData);
 
   const title = data.title;
   const description = data.description;
   const slug = data.slug;
   const date = new Date(data.date);
   const tags = data.tags ?? [];
+  const html = await articleHtml(content);
 
-  return { title, description, slug, date, tags };
+  return { dir: fullDir, title, description, slug, date, tags, html };
 }
 
 export async function getArticles(): Promise<Article[]> {

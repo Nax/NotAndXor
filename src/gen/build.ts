@@ -36,6 +36,9 @@ export async function build(builder: Builder) {
 
   if (CONFIG.dev) {
     watch('index.css', () => { buildCss(builder); });
+    for (const a of articles) {
+      watch(a.dir + '/article.md', () => { buildBlogArticle(builder, a, pageData); });
+    }
   }
 }
 

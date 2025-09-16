@@ -8,6 +8,7 @@ export function PageArticle({ article }: PageArticleProps) {
     <article>
       <h1>{article.title}</h1>
       <h2>{article.description}</h2>
+      <div class="prose" dangerouslySetInnerHTML={{ __html: article.html }}/>
     </article>
   );
 }

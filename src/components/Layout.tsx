@@ -22,7 +22,7 @@ export function Layout({ data, children }: LayoutProps) {
       </head>
       <body>
         <header>
-          <h1><a href='/'>{CONFIG.siteName}</a></h1>
+          <h1><a href='/'>Not And Xor</a></h1>
         </header>
         <main>{children}</main>
         <footer>
