@@ -7,4 +7,5 @@ export type OutputFile = {
 export type PageData = {
   title: string;
   css: string;
+  canonicalUrl?: string;
 };

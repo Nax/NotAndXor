@@ -1,3 +1,4 @@
+import crypto from 'node:crypto';
 import { styleText } from 'node:util';
 
 import { OutputFile } from './types';
@@ -15,6 +16,14 @@ function formatBytes(size: number) {
   return `${size.toFixed(2)} ${SUFFIXES[suffixIndex]}`;
 }
 
+function processFileName(name: string, content: string | Uint8Array): string {
+  if (name.includes('[hash]')) {
+    const hash = crypto.createHash('sha256').update(content).digest('hex').substring(0, 12);
+    name = name.replace('[hash]', hash);
+  }
+  return name;
+}
+
 export class Builder {
   private callback: BuilderCallback;
 
@@ -23,6 +32,8 @@ export class Builder {
   }
 
   emit(file: OutputFile): OutputFile {
+    file = { ...file };
+    file.name = processFileName(file.name, file.content);
     const fileSize = file.content.length;
     console.log(`${styleText(['bold', 'green'], file.name.padEnd(50))} ${styleText(['bold', 'yellow'], formatBytes(fileSize).padStart(8))}`);
     this.callback(file);

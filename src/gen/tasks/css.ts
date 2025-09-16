@@ -3,7 +3,9 @@ import fs from 'fs/promises';
 import postcss from 'postcss';
 import postcssPresetEnv from 'postcss-preset-env';
 import postcssImport from 'postcss-import';
+import cssnano from 'cssnano';
 
+import { CONFIG } from '../config';
 import { Builder } from '../builder';
 import { OutputFile } from '../types';
 
@@ -14,7 +16,8 @@ export async function buildCss(builder: Builder): Promise<OutputFile> {
   const output = await postcss([
     postcssImport(),
     postcssPresetEnv(),
-  ]).process(data, { from: inputFile });
+    CONFIG.dev ? null : cssnano(),
+  ].filter(x => !!x)).process(data, { from: inputFile });
 
-  return builder.emit({ name: 'app.css', content: output.css, mimeType: 'text/css' });
+  return builder.emit({ name: CONFIG.dev ? 'app.css' : 'app.[hash].min.css', content: output.css, mimeType: 'text/css' });
 }

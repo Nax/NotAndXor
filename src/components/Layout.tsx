@@ -16,6 +16,7 @@ export function Layout({ data, children }: LayoutProps) {
         <meta charSet='utf-8'/>
         <meta name='viewport' content='width=device-width, initial-scale=1'/>
         <meta name='description' content={CONFIG.siteDescription}/>
+        {data.canonicalUrl && <link rel='canonical' href={data.canonicalUrl}/>}
         <title>{data.title}</title>
         <link rel='stylesheet' href={`/${data.css}`}/>
       </head>
