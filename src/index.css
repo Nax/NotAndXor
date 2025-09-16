@@ -36,6 +36,11 @@ ul, ol {
   padding-left: 2rem;
 }
 
+.prose {
+  margin-bottom: 4rem;
+}
+
+
 article {
   margin-bottom: 4rem;
 }
@@ -137,6 +142,10 @@ main {
 
 .prose a:hover {
   text-decoration: underline;
+}
+
+.prose video {
+  max-width: 100%;
 }
 
 .small-caps {
