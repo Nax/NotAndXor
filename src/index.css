@@ -152,15 +152,40 @@ header h1 {
 }
 
 header a {
+  display: inline-block;
   color: inherit;
   text-decoration: none;
   font-size: 3rem;
+  border: 0.3rem solid black;
+  padding: 0.5rem;
+}
+
+header a:hover {
+  background: black;
+  color: white;
 }
 
 footer {
-  background: #333;
+  font-family: var(--font-sans);
+  background: #111;
   color: white;
   text-align: center;
-  padding: 0.5rem;
-  border-top: 1px solid #444;
+  padding: 1rem;
+  border-top: 1px solid #222;
+}
+
+.social {
+  pad: 1rem;
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.social svg {
+  height: 2rem;
+  color: white;
+}
+
+.social svg:hover {
+  color: #ccc;
 }
