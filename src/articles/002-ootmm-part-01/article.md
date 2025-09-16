@@ -184,8 +184,8 @@ To fix that, every time Majora's Mask tries to load anything from the cartridge,
 Once all of these are patched, this is the result:
 
 <video autoplay loop muted>
-  <source src="/assets/ootmm/transition-n64-logo.webm" type="video/webm"/>
-  <source src="/assets/ootmm/transition-n64-logo.mp4" type="video/mp4"/>
+  <source src="transition.webm" type="video/webm"/>
+  <source src="transition.mp4" type="video/mp4"/>
 </video>
 
 This was, more or less, the state of the project for most of its life, before I seriously started working on it.

@@ -64,13 +64,34 @@ const transformNotes = (document: Document) => {
   }
 };
 
-export async function articleHtml(content: string): Promise<string> {
+const transformAssets = (document: Document, assets: Map<string, string>) => {
+  const imgs = document.getElementsByTagName('img');
+  for (let i = 0; i < imgs.length; ++i) {
+    const img = imgs.item(i)!;
+    const src = img.attributes.getNamedItem('src')?.value;
+    if (src && assets.has(src)) {
+      img.src = assets.get(src)!;
+    }
+  }
+
+  const sources = document.getElementsByTagName('source');
+  for (let i = 0; i < sources.length; ++i) {
+    const source = sources.item(i)!;
+    const src = source.attributes.getNamedItem('src')?.value;
+    if (src && assets.has(src)) {
+      source.src = assets.get(src)!;
+    }
+  }
+};
+
+export async function articleHtml(content: string, assets: Map<string, string>): Promise<string> {
   const parsed = await marked(content);
   const { document } = (new JSDOM(parsed)).window;
 
   transformSmallCaps(document);
   transformCode(document);
   transformNotes(document);
+  transformAssets(document, assets);
 
   return document.body.innerHTML;
 };

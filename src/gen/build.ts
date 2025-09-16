@@ -20,7 +20,11 @@ function watch(name: string, callback: () => void) {
   });
 }
 
-export async function build(builder: Builder) {
+export async function build(builder: Builder, watchCallback?: () => void) {
+  if (!watchCallback) {
+    watchCallback = () => {};
+  }
+
   const [articles, css] = await Promise.all([
     getArticles(),
     buildCss(builder),
@@ -39,9 +43,9 @@ export async function build(builder: Builder) {
   await Promise.all(promises);
 
   if (CONFIG.dev) {
-    watch('index.css', () => { buildCss(builder); });
+    watch('index.css', () => { buildCss(builder).then(watchCallback); });
     for (const a of articles) {
-      watch(a.dir + '/article.md', () => { buildBlogArticle(builder, a, pageData); });
+      watch(a.dir + '/article.md', () => { buildBlogArticle(builder, a, pageData).then(watchCallback); });
     }
   }
 }

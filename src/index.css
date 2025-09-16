@@ -32,6 +32,10 @@ ul, ol {
   list-style: decimal;
 }
 
+.prose ul, .prose ol {
+  padding-left: 2rem;
+}
+
 article {
   margin-bottom: 4rem;
 }

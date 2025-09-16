@@ -1,4 +1,5 @@
 export type OutputFile = {
+  source?: string;
   name: string;
   content: string | Uint8Array;
   mimeType?: string;
