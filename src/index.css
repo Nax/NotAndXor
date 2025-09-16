@@ -19,6 +19,9 @@
   --color-cyan:       hsl(215, 80%, 40%);
 }
 
+article {
+  margin-bottom: 4rem;
+}
 
 @media (max-width: 1279px) {
   main {

@@ -1,7 +1,7 @@
 export type OutputFile = {
   name: string;
   content: string | Uint8Array;
-  mimeType: string;
+  mimeType?: string;
 };
 
 export type PageData = {

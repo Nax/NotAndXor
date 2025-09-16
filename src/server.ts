@@ -25,7 +25,9 @@ async function devServer() {
     for (const p of paths) {
       const f = files.get(p);
       if (f) {
-        res.setHeader('Content-Type', f.mimeType);
+        if (f.mimeType) {
+          res.setHeader('Content-Type', f.mimeType);
+        }
         res.send(f.content);
         return;
       }

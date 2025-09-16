@@ -5,7 +5,7 @@ import { OutputFile } from './types';
 
 type BuilderCallback = (file: OutputFile) => void;
 
-const SUFFIXES = ['B', 'KiB', 'MiB', 'GiB'];
+const SUFFIXES = ['B ', 'KB', 'MB', 'GB'];
 
 function formatBytes(size: number) {
   let suffixIndex = 0;
@@ -13,7 +13,7 @@ function formatBytes(size: number) {
     size /= 1024;
     suffixIndex++;
   }
-  return `${size.toFixed(2)} ${SUFFIXES[suffixIndex]}`;
+  return `${size.toFixed(suffixIndex > 0 ? 2 : 0)} ${SUFFIXES[suffixIndex]}`;
 }
 
 function processFileName(name: string, content: string | Uint8Array): string {
@@ -35,7 +35,7 @@ export class Builder {
     file = { ...file };
     file.name = processFileName(file.name, file.content);
     const fileSize = file.content.length;
-    console.log(`${styleText(['bold', 'green'], file.name.padEnd(50))} ${styleText(['bold', 'yellow'], formatBytes(fileSize).padStart(8))}`);
+    console.log(`${styleText(['bold', 'green'], file.name.padEnd(50))} ${styleText(['bold', 'yellow'], formatBytes(fileSize).padStart(11))}`);
     this.callback(file);
     return file;
   }
