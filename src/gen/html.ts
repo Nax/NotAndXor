@@ -1,4 +1,4 @@
-import { h, ComponentProps, ComponentType } from 'preact';
+import { h, ComponentType } from 'preact';
 import { PageData } from './types';
 import { Layout } from '../components/Layout';
 import { renderToStaticMarkup } from 'preact-render-to-string';

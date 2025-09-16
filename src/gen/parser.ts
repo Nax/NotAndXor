@@ -2,7 +2,6 @@ import { JSDOM } from 'jsdom';
 import { marked } from 'marked';
 import markedKatex from 'marked-katex-extension';
 import hljs from 'highlight.js';
-import { Article } from './articles';
 
 marked.use(markedKatex({}));
 

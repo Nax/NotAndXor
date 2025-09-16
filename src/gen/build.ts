@@ -8,6 +8,7 @@ import { buildCss } from './tasks/css';
 import { CONFIG } from './config';
 import { PageData } from './types';
 import { getArticles } from './articles';
+import { buildRss } from './tasks/rss';
 
 function watch(name: string, callback: () => void) {
   const file = path.resolve(__dirname, '..', name);
@@ -31,6 +32,7 @@ export async function build(builder: Builder) {
   for (const a of articles) {
     promises.push(buildBlogArticle(builder, a, pageData));
   }
+  promises.push(buildRss(builder, articles));
 
   await Promise.all(promises);
 
