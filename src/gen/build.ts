@@ -10,6 +10,7 @@ import { PageData } from './types';
 import { getArticles } from './articles';
 import { buildRss } from './tasks/rss';
 import { buildStatic } from './tasks/static';
+import { buildFavicons } from './tasks/favicons';
 
 function watch(name: string, callback: () => void) {
   const file = path.resolve(__dirname, '..', name);
@@ -25,13 +26,14 @@ export async function build(builder: Builder, watchCallback?: () => void) {
     watchCallback = () => {};
   }
 
-  const [articles, css] = await Promise.all([
+  const [articles, css, favicons] = await Promise.all([
     getArticles(),
     buildCss(builder),
+    buildFavicons(builder),
   ]);
 
   const promises: Promise<unknown>[] = [];
-  const pageData: PageData = { title: CONFIG.siteName, css: css.name };
+  const pageData: PageData = { favicons, title: CONFIG.siteName, css: css.name };
 
   promises.push(buildBlogIndex(builder, articles, pageData));
   for (const a of articles) {

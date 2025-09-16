@@ -6,6 +6,7 @@ export type OutputFile = {
 };
 
 export type PageData = {
+  favicons: string[];
   title: string;
   css: string;
   canonicalUrl?: string;

@@ -1,7 +1,7 @@
-import { CONFIG } from '../gen/config';
 import type { ComponentChildren, ComponentType } from 'preact';
-import { PageData } from '../gen/types';
 
+import { CONFIG } from '../gen/config';
+import { PageData } from '../gen/types';
 import { IconGithub, IconKoFi, IconLinkedin, IconRss, IconTwitch } from './Icons';
 
 type SocialLinkProps = {
@@ -35,6 +35,7 @@ export function Layout({ data, children }: LayoutProps) {
         <title>{data.title}</title>
         <link rel='stylesheet' href={`/${data.css}`}/>
       </head>
+      <head dangerouslySetInnerHTML={{ __html: data.favicons.join('') }}/>
       <body>
         <header>
           <h1><a href='/'>Not And Xor</a></h1>
