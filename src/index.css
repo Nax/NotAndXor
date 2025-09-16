@@ -19,6 +19,19 @@
   --color-cyan:       hsl(215, 80%, 40%);
 }
 
+ul, ol {
+  list-style: none;
+  padding: 0;
+}
+
+.prose ul {
+  list-style: disc;
+}
+
+.prose ol {
+  list-style: decimal;
+}
+
 article {
   margin-bottom: 4rem;
 }
@@ -191,4 +204,37 @@ footer {
 
 .social svg:hover {
   color: #ccc;
+}
+
+.article-card {
+  font-family: var(--font-sans);
+  font-size: 120%;
+  width: 800px;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 3rem;
+}
+
+a.article-card {
+  color: inherit;
+  text-decoration: none;
+}
+
+a.article-card:hover .article-card-title {
+  text-decoration: underline;
+}
+
+.article-card-title {
+  font-weight: bold;
+  font-size: 150%;
+  color: inherit;
+  text-decoration: none;
+}
+
+.article-card-date {
+  color: #444;
+}
+
+.article-card-description {
+  font-style: italic;
 }

@@ -1,17 +1,11 @@
 import { Article } from '../gen/articles';
+import { ArticleCard } from './ArticleCard';
 
 type PageIndexProps = {
   articles: Article[];
 };
 export function PageIndex({ articles }: PageIndexProps) {
   return (
-    <ol>
-      {articles.map(article => (
-        <li key={article.slug}>
-          <a href={`/${article.slug}/`}>{article.title}</a> - <time dateTime={article.date.toISOString()}>{article.date.toDateString()}</time>
-          <p>{article.description}</p>
-        </li>
-      ))}
-    </ol>
+    <ol>{articles.map(article => <li key={article.slug}><ArticleCard link article={article}/></li>)}</ol>
   );
 }

@@ -1,4 +1,5 @@
 import { Article } from '../gen/articles';
+import { ArticleCard } from './ArticleCard';
 
 type PageArticleProps = {
   article: Article;
@@ -6,8 +7,7 @@ type PageArticleProps = {
 export function PageArticle({ article }: PageArticleProps) {
   return (
     <article>
-      <h1>{article.title}</h1>
-      <h2>{article.description}</h2>
+      <ArticleCard article={article}/>
       <div class="prose" dangerouslySetInnerHTML={{ __html: article.html }}/>
     </article>
   );
