@@ -49,7 +49,14 @@ export async function build(builder: Builder, watchCallback?: () => void) {
   if (CONFIG.dev) {
     watch('index.css', () => { buildCss(builder).then(watchCallback); });
     for (const a of articles) {
-      watch(a.dir + '/article.md', () => { buildBlogArticle(builder, a, pageData).then(watchCallback); });
+      watch(a.dir + '/article.md', async () => {
+        const newArticles = await getArticles();
+        articles.splice(0, articles.length, ...newArticles);
+        const newA = newArticles.find(x => x.dir === a.dir);
+        if (newA) {
+          buildBlogArticle(builder, newA, pageData).then(watchCallback);
+        }
+      });
     }
   }
 }

@@ -24,7 +24,6 @@ type LayoutProps = {
 
 export function Layout({ data, children }: LayoutProps) {
   const year = new Date().getFullYear();
-  const htmlNs = {"xmlns:og": "http://ogp.me/ns#"};
 
   const ldWebsite = {
     "@context": "https://schema.org",
@@ -43,7 +42,7 @@ export function Layout({ data, children }: LayoutProps) {
   };
 
   return (
-    <html lang='en-US' {...htmlNs}>
+    <html lang='en-US' prefix="og: http://ogp.me/ns#">
       <head>
         <meta charSet='utf-8'/>
         <meta name='viewport' content='width=device-width, initial-scale=1'/>

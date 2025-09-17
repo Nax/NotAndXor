@@ -144,7 +144,7 @@ main {
   text-decoration: underline;
 }
 
-.prose video {
+.prose video, .prose img {
   max-width: 100%;
 }
 
