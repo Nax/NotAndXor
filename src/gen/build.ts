@@ -11,6 +11,7 @@ import { getArticles } from './articles';
 import { buildRss } from './tasks/rss';
 import { buildStatic } from './tasks/static';
 import { buildFavicons } from './tasks/favicons';
+import { buildSitemap } from './tasks/sitemap';
 
 function watch(name: string, callback: () => void) {
   const file = path.resolve(__dirname, '..', name);
@@ -39,8 +40,9 @@ export async function build(builder: Builder, watchCallback?: () => void) {
   for (const a of articles) {
     promises.push(buildBlogArticle(builder, a, pageData));
   }
-  promises.push(buildRss(builder, articles));
   promises.push(buildStatic(builder));
+  promises.push(buildRss(builder, articles));
+  promises.push(buildSitemap(builder, articles));
 
   await Promise.all(promises);
 
