@@ -44,7 +44,7 @@ export async function buildRss(builder: Builder, articles: Article[]): Promise<O
   channel.appendChild(language);
 
   const lastBuildDate = document.createElement('lastBuildDate');
-  lastBuildDate.appendChild(document.createTextNode(dateRfc822(recentArticles[0].date)));
+  lastBuildDate.appendChild(document.createTextNode(dateRfc822(recentArticles[0].createdAt)));
   channel.appendChild(lastBuildDate);
 
   for (const article of recentArticles) {
@@ -64,7 +64,7 @@ export async function buildRss(builder: Builder, articles: Article[]): Promise<O
     item.appendChild(guid);
 
     const pubDate = document.createElement('pubDate');
-    pubDate.appendChild(document.createTextNode(dateRfc822(article.date)));
+    pubDate.appendChild(document.createTextNode(dateRfc822(article.createdAt)));
     item.appendChild(pubDate);
 
     const itemDescription = document.createElement('description');

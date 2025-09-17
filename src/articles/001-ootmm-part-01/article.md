@@ -2,7 +2,7 @@
 title: "Making a combo randomizer part 01"
 description: "Emulating the Nintendo 64 boot process on the Nintendo 64"
 slug: ootmm-part-01
-date: 2023-08-19
+created_at: 2023-08-19
 tags: [Nintendo-64, MIPS, OoTMM]
 ---
 

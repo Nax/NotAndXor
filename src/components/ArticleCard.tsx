@@ -8,7 +8,7 @@ type ArticleCardProps = {
   article: Article;
 }
 export function ArticleCard({ article, link }: ArticleCardProps) {
-  const date = strftime('%B %d, %Y', article.date);
+  const date = strftime('%B %d, %Y', article.createdAt);
 
   const Wrapper = ({ children }: { children: ComponentChildren }) => link ? <a class="article-card" href={`/${article.slug}`}>{children}</a> : <div class="article-card">{children}</div>;
 
