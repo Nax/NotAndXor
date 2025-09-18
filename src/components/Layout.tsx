@@ -50,6 +50,7 @@ export function Layout({ data, children }: LayoutProps) {
         <title>{data.title}</title>
         <link rel='stylesheet' href={`/${data.css}`}/>
         {data.meta.map((m, i) => <meta key={i} name={m.name} property={m.property} content={m.content}/>)}
+        <script async src="https://scripts.simpleanalyticscdn.com/latest.js"/>
       </head>
       <head dangerouslySetInnerHTML={{ __html: data.favicons.join('') }}/>
       <body>
