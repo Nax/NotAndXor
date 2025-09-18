@@ -132,7 +132,7 @@ main {
 .prose p {
   text-align: justify;
   line-height: 1.1;
-  margin: 1em 0;
+  margin: 1.5rem 0;
 }
 
 .prose a {
@@ -146,6 +146,12 @@ main {
 
 .prose video, .prose img {
   max-width: 100%;
+}
+
+.prose hr {
+  border: none;
+  border-top: 1px solid var(--color-lightgray);
+  margin: 3rem 0;
 }
 
 .small-caps {
@@ -165,6 +171,7 @@ pre, code {
 pre > .hljs {
   padding: 0;
   margin: 0;
+  font-size: 1rem;
 }
 
 pre code.hljs {
