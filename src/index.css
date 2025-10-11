@@ -210,6 +210,11 @@ footer {
   border-top: 1px solid #222;
 }
 
+footer a {
+  color: white;
+  text-decoration: underline;
+}
+
 .social {
   pad: 1rem;
   display: flex;

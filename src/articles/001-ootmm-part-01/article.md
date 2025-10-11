@@ -1,195 +1,72 @@
 ---
 title: "Making a combo randomizer part 01"
-description: "Emulating the Nintendo 64 boot process on the Nintendo 64"
+description: "An introduction to the OoTMM project"
 slug: ootmm-part-01
 created_at: 2023-08-19
 tags: [Nintendo-64, MIPS, OoTMM]
 ---
 
-For over three years, I have been working on [OoTMM](https://ootmm.com), a combo randomizer in the like of [SMZ3](https://samus.link),
-but for Ocarina of Time and Majora's Mask. I started working on it seriously since around a year.
-It's been out for a few months now<note>At the time of writing, we're at version 14.0.</note>,
-and I'm gonna write a few posts about the development of this project.  
+For almost 5 years now, I have been working on a project called [OoTMM](https://ootmm.com) - the **Ocarina of Time & Majora's Mask Combo Randomizer**. I started working on it in a pretty difficult period of my life, and it's been a great source of motivation and accomplishment for me ever since.
 
-This post is about how the Nintendo 64 loads games, and how Ocarina of Time can be modified to load Majora's Mask.
+But what is a combo randomizer? In fact, what is a video game randomizer at all?
 
-## Booting the Nintendo 64
+## Randomizers
 
-N64 games are stored on cartridges that are plugged into the console and memory-mapped into various parts of the address space.
-The virtual address space of the system is 32-bit, and is split into a few large segments, only two of which are really used<note>
-The system also supports 3 more segments that are TLB-mapped, meaning the game can control the mapping.
-Since the useable physical address space is already fully mapped by the two fixed segments, the TLB-mapped segments are of questionable use.
-Only a few games ever used them.
-</note>: `KSEG0` and `KSEG1`, starting at `0x80000000` and `0xa0000000` respectively.
-They map to the same physical range, but `KSEG0` is cached, while `KSEG1` is not.
+At its core, a randomizer is a program that takes a video game and shuffles the position of some of its elements, typically items or power-ups, to create a new experience for the player.  
+We call the unique, randomized version of the game that is thus produced a *seed*<note>Technically the seed is what was given as an input to the pseudo-random number generator that was used during the randomization, but the analogy stuck.</note>.  
 
-The physical memory map is more complex, given that the system is built around a lot of components that the CPU can talk to using MMIO<note>Memory Mapped IO</note>.
-The main memory, called RDRAM, is mapped to the lowest 8MiB of the address space (or 4MiB, if the expansion pack is not installed).
-The area starting at `0x10000000` is mapped to the "main" part of the cartridge<note>
-Some cartridges have multiple components that are mapped at different addresses, to implement saving for example.
-This will be expanded upon in a later post.
-</note>. Since it's usually desirable to access the cartridge through the uncached segment, for most purposes, the cartridge can be considered to be
-mapped starting at `0xb0000000` in the virtual space.
+Typically, unless disabled by the user, a proper randomizer ensures that it is still possible to complete the game, even with the shuffled elements. The algorithm and set of rules that enforce this is called *logic* in the randomizer jargon.
+Conversely, a seed where this has been disabled is called a *no-logic seed*.
 
-When the system is turned on, it performs a 3-stage boot process, called IPL1, IPL2 and IPL3.
-The first two stages are handled by the internal boot rom and perform basic hardware setup, and then attempts to load IPL3 which is stored in
-the cartridge itself. There are a few different versions of IPL3, depending on the game, but they all perform the same basic operations:
-load the first MiB of the cartridge (not including its header, which is also where the IPL3 is stored) into memory, at physical offset `0x1000`,
-checksum it, and if it's valid, jump into the entrypoint of the game.
+Some games are more suited to randomization than others. Typically, games that have both pretty open environments where progression is gated by acquiring items or abilities are very good candidates. On the other hand, games that are either very open with little gating, or very linear with little opportunities to use items or abilities outside of their intended context are poor candidates.
 
-The thing is, this process is fairly straightforward to replicate<note>*Checksumming optionnal*</note>,
-and n64 roms can get pretty large, which are the two main reasons I considered this project worth investigating in the first place.
+Some well-known games or series that are commonly randomized include:
+- *The Legend of Zelda* series, both the 2D and 3D entries
+- *Metroid* series, especially *Super Metroid*
+- *Castlevania* series (the metroidvania-style ones)
 
-## Merging ROMs
+Perhaps the most popular game to be randomized is *The Legend of Zelda: A Link to the Past*<note>Also known as ALttP or Zelda 3.</note>. The [ALttP Randomizer](https://alttpr.com) has been around for about a decade, and still has regular updates and a very active playerbase.
 
-The first step is of course to create a ROM that contains both games. Both Ocarina of Time and Majora's Mask are 32MiB in size<note>Both game are actually 64MiB when uncompressed, and use the uncompressed offsets internally to refer to files. This will also be expanded upon in a later post.</note>, but the Nintendo 64 handles 64MiB carts just fine, so a basic solution is to do the dumbest thing that could possibly work and just concatenate the two ROMs together. Ocarina lives in the low half, and Majora in the high half.
+## Combo Randomizers
 
-Ocarina of Time does not care the slightest that the ROM is oversized and happily boots, without having to change anything, completely ignoring the upper 32MiB. So there are only two things left to do:
+A combo randomizer is a specific type of randomizer, where multiple games are combined together and the various items/abilities from all these games are shuffled together.  
 
- * Inject some code into OoT to replicate the n64 boot process, but with a 32 MiB offset, making MM load.
- * Patch MM so that every time it tries to load something from the cartridge, it adds 32 MiB to the address.
+Up to the release of OoTMM, there was only a single combo randomizer in existence called [SMZ3](https://samus.link) that combined *Super Metroid* and *A Link to the Past*.
 
-How exactly I managed to add custom code to the games is a fairly complex topic that will take a few posts at least, so for the time being, let's just assume I can patch and add some assembly and some C there and there.
+<img src="smz3.png" alt="Screenshot of the title screen of SMZ3"/>
 
-I decided fairly early on that the trigger to load MM would be stepping in the Happy Mask Shop in OoT, since, well, masks<note>It's still the main way to access MM to this day.</note>. Turns out, there is a function called `Play_Init` living at address `0x8009a750`, that is called every time the player enters a scene. The scene is determined by an entrance index, a 32-bit value stored at `0x8011a5d0`. It was not very hard to write some assembly to check for entrance `0x1d1`, which is the Happy Mask Shop, and call some custom function if that's the case.
+The randomizer builds a single ROM that internally combines both games, and uses clever assembly hacks to allow the player to switch between the two games at predefined locations.  
 
-Writing the code to replicate the boot process is not extremely hard either, but while running the game, the system is in a much more dynamic state than after the IPL2. There are a lot of things that are going on: threads, audio and video processing, peripherals being read, etc. All of that needs to be stopped, in order to back to a known, simpler state that will not interfere with the loading.
+It plays somewhat differently from a standard randomizer - not only can you obtain items from one game in the other, but there are a total of 4 "connectors" that allow you to switch between the games, at predefined points. This can significantly change the routing, for example, Lower Norfair, a very late-game region in *Super Metroid* that is difficult to access, can sometimes be reached much earlier in SMZ3 by going through a crossover point in *A Link to the Past*'s Dark World.
 
-## Interrupts and subsystems
+## OoTMM
 
-The very first step here is to disable all interrupts. We don't want the interrupts to interfere, and MM's entrypoint will expect interrupts to be masked anyway. 
-There is only one core on the Nintendo 64, so disabling interrupts also ensures that no other code will run, essentially forcing critical section semantics.
-The assembly for that is pretty straightforward:
+OoTMM is the project I created, inspired by SMZ3. I found the concept of combo randomizers very interesting, and wanted to replicate that with two other games. Eventually I settled on *The Legend of Zelda: Ocarina of Time* and *The Legend of Zelda: Majora's Mask*, the two very popular Zelda games on the Nintendo 64.
 
-```mips
-.global comboDisableInterrupts
-comboDisableInterrupts:
-  /* Disable the IE bit in COP0 Status to disable interrupts */
-  mfc0 a0, $12
-  li a1, 0xfffffffe
-  and a0, a1
-  mtc0 a0, $12
+<div style="display: flex; gap: 10px; justify-content: center; align-items: center;">
+  <img width="50%" src="title_oot.png" alt="Screenshot of the title screen of 'The Legend of Zelda: Ocarina of Time'"/>
+  <img width="50%" src="title_mm.png" alt="Screenshot of the title screen of 'The Legend of Zelda: Majora's Mask'"/>
+</div>
 
-  /* Mask MIPS Interface interrupts */
-  la   a1, 0xa4300000
-  li   a0, 0x0555
-  jr   ra
-   sw  a0, 0x0c(a1)
-```
+The games are pretty similar on the surface - you play as Link, who must explore dungeons, finding important items on the way allowing to solve puzzles and defeat monsters. The main dungeons contain special "quest" items (stones & medallions in Ocarina of Time, boss remains in Majora's Mask) that eventually allow you to reach the final dungeon, defeat the final boss and complete the game. In other words, the classic Zelda formula, Ocarina of Time in particular being very similar to *A Link to the Past* in its structure.
 
-Bit 0 of the Status register of coprocessor 0 is `IE`, the Interrupt Enable bit. Clearing it does exactly what you would expect.
-The Nintendo 64 has it's own interrupt system that are used by the various peripheral, and they all assert the same interrupt line on the CPU<note>
-Since they all use the same line, it's not possible to discriminate between them the normal way (by checking a few bits in COP0).
-Instead, the interrupt handler needs to read the MI_INTR_REG register at `0x04300008` to get a bitmap of raised interrupts.</note>.
-Writing `0x0555` to the memory mapped register at `0xa4300000` masks these interrupts.
-Note that it does not necessarily prevents new interrupts from being generated, nor does it clear the interrupts that might be pending
-(as unlikely as it is in this 4 instruictions window). This is handled right afterwards, by reading and writing a bunch of MMIO registers.
-The code here is fairly long and not very interesting, but what it does is essentially the following:
+Majora's Mask has a few, fairly unique mechanisms on top of that. The game resolves around masks you can wear<note>There is a small sidequest in Ocarina of Time involving masks as well, but it's extremely basic compared to Majora's Mask.</note>, each giving you specific abilities. A few masks in particular allow you to transform into different forms (Deku, Goron and Zora), each having different abilities.
 
- * Disable the video output and clear any video interrupt
- * Stop the RSP and the RDP (the graphical co-processors, essentially) and clear their interrupts
- * Stop the audio output and disable the audio interrupt
- * Disable the controller interface and clear the controller interrupt
+The other unique mechanism is the 3-day cycle. While Ocarina of Time had a day/night cycle, it only affected a few things, such as some doors being closed at night, or collectibles appearing only at night. In Majora's Mask, the whole game takes place in a 3-day in-game cycle, at the end of which the Moon crashes into the world, forcing a game over. To avoid that, the player can play the "Song of Time" on their ocarina to go back in time, at the start of the first day. This resets most of the world - chests that were open are closed again, NPCs are back at their initial position and forget what you told them or the items you gave them, etc. However, the player retains the major items & masks they have obtained, allowing them to progress further.
 
-## Cache and DMA
+This created a challenge for the randomizer - in addition to the technical challenges of creating the combined ROM and programming the actual randomizer, there were also significant design challenges in blending two games, one of which being time-based with a cycle system, and the other having a traditional persistent progression.
 
-For console compatibility, it's also required to handle the caches. The MIPS CPU in the Nintendo 64 uses a simple system with a single data cache and a single instruction cache, with no coherency. As Majora's Mask will be loaded via DMA, bypassing the CPU caches, it's very important that the first MiB of memory is not present in the cache at all, or else there is a risk of executing garbage or silently corrupting data, depending on which cache is at fault. It is not possible to rely on the cache functions that comes with Ocarina of Time, since they are located within the first MiB of memory themselves!
-Instead, it's necessary to reimplement these functions. Fortunately they're not hard to implement:
+On the other hand, Ocarina of Time has one major gameplay element not found in Majora's Mask - time travel. The player starts as a child, but eventually obtains the Master Sword which forwards them 7 years into the future, where Link is now an adult. The world of course is significantly different between the two time periods - the Castle Market for example, the main town in the game, is very living and full of NPCs as a child, but has been overtaken by the forces of Ganon as an adult.
 
-```c
-#define ICACHELINE 0x20
-#define DCACHELINE 0x10
+## Design
 
-void comboInvalICache(void* addr, u32 size)
-{
-    u32 iaddr;
-    u32 iend;
-    u32 count;
+Very early when making the project, I decided to keep the main mechanics of each game intact, but had to make compromises on a few aspects to make it playable. So Majora's Mask still has the 3-day cycle, but it is paused when you are in Ocarina of Time.  
+The player absolutely needs the Ocarina & Song of Time to reset the 3-day cycle. Until they have it, virtually all of Majora's Mask is considered logically inaccessible<note>To ensure that the player doesn't end up in a situation where there are required to obtain an item in Majora's Mask to progress, but are unable to do so because they lack enough time.</note><note>There are a few exceptions - some items that can be obtained in a few seconds when entering Majora's Mask are considered fair game.</note>.
 
-    iaddr = (u32)addr & ~(ICACHELINE - 1);
-    iend = (u32)addr + size;
-    count = (iend - iaddr + (ICACHELINE - 1)) / ICACHELINE;
+Normally when resetting the 3-day cycle, chests that the player has already opened are closed again, and doors that the player has unlocked are locked again. This is fairly undesirable in a randomizer - the chests could contain items from Ocarina of Time, in which case being re-acquired isn't desirable. Once I decided that chests would remain open, the fact that doors would get locked again became a problem too, as most keys are found in chests. So to provide a playable and uniform experience, I made all of these things permanent instead of cycle-based.
 
-    for (u32 i = 0; i < count; ++i)
-    {
-        __asm__ __volatile__("cache 0x10, 0(%0)" :: "r"(iaddr));
-        iaddr += ICACHELINE;
-    }
-}
+It was also difficult to find good spots to place the crossover points between the two games. Unlike *A Link to the Past* and *Super Metroid*, there are not a lot of "useless" doors that could be hijacked for that purpose in Ocarina of Time and Majora's Mask. I eventually settled on a single crossover point, which is the Happy Mask Shop door in Ocarina of Time and the Clock Tower door in Majora's Mask, because they are thematically linked. Which means it is actually impossible to enter the Mask Shop in OoT and the Clock Tower in MM, so I had to alter a few things to make up for that<note>The masks you get in the mask shop in Ocarina of Time were just placed at random in the item pool instead. The Deku Mask you get in the Clock Tower in Majora's Mask received the same treatment. In Majora's Mask you also learn a song, the Song of Healing, in the Clock Tower at the beginning of the game - to make up for that, the player instead receives a random song when entering Majora's Mask for the first time.</note>.
 
-void comboInvalDCache(void* addr, u32 size)
-{
-    u32 daddr;
-    u32 dend;
-    u32 count;
+One significant difference between OoTMM and SMZ3 is that in OoTMM, both games are Zelda games, and thus share a lot of similar items and mechanics, which allowed interesting mechanics to emerge. For example, there is a setting to share identical items - if you enable "Shared Bows" for example, finding a bow gives you the bow in both games. There are also mechanics that are found in one game, but could work in the other, which we ported and placed behind settings. For example, in Majora's Mask the Ice Arrow can create ice platforms on water surface, something that doesn't exist in Ocarina of Time, despite both games having this item. There is a setting to enable this behavior in Ocarina of Time, which opens a lot of new routes.
 
-    daddr = (u32)addr & ~(DCACHELINE - 1);
-    dend = (u32)addr + size;
-    count = (dend - daddr + (DCACHELINE - 1)) / DCACHELINE;
-
-    for (u32 i = 0; i < count; ++i)
-    {
-        __asm__ __volatile__("cache 0x11, 0(%0)" :: "r"(daddr));
-        daddr += DCACHELINE;
-    }
-}
-```
-
-Setting up a temporary stack is also required, since the current one might be overriden when loading the game.
-Any address sufficiently higher than the first MiB does the trick.
-
-Now that all this setup is done, it's possible to actually load Majora's Mask. The only thing left to do is to load the first MiB<note>
-This is actually overkill. Majora's Mask only requires `0x19500` bytes to be loaded, and Ocarina of Time a very small `0x6430` bytes. Obtaining these numbers, however, requires some knowledge about the underlying file system the games use, whereas loading 1MiB like the normal boot process does is guaranteed to work for any game.</note> of the ROM into memory and jump to the entrypoint. Doing that through CPU reads and writes is doable but slow. Instead, a much faster DMA transfer can be used to do the job. It's as simple as writing the source, destination and size to some MMIO registers, and then busy-looping until the transfer is done:
-
-```c
-static void waitForPi(void)
-{
-    u32 status;
-
-    for (;;)
-    {
-        status = IO_READ(PI_STATUS_REG);
-        if ((status & 3) == 0)
-            return;
-    }
-}
-
-void comboDma_NoCacheInval(void* dramAddr, u32 cartAddr, u32 size)
-{
-    u32 tmp;
-
-    waitForPi();
-    while (size)
-    {
-        tmp = size;
-        if (tmp > 0x2000)
-            tmp = 0x2000;
-        IO_WRITE(PI_DRAM_ADDR_REG, (u32)dramAddr & 0x1fffffff);
-        IO_WRITE(PI_CART_ADDR_REG, cartAddr | PI_DOM1_ADDR2);
-        IO_WRITE(PI_WR_LEN_REG, tmp - 1);
-        waitForPi();
-        size -= tmp;
-        dramAddr = (void*)((u32)dramAddr + tmp);
-        cartAddr += tmp;
-    }
-}
-```
-
-And after jumping to the MM entry point at `0x80080000`, Majora's Mask finally loads, and then immediately crash as soon as it tries to load some data from the cartridge.
-
-## Fixups
-
-To fix that, every time Majora's Mask tries to load anything from the cartridge, `0x2000000` needs to be added to the physical address, to account for the offset in the ROM. Patching the code that initiates every DMA request in MM works, but unfortunately it's a bit of a dead-end, as we'll need to load data below the 32 MiB mark later, when adding OoT elements into MM. The correct solution is to patch every single physical address to add the 32 MiB offset. Fortunately, there are not that many of them. There is the main DMA table located at `0x7430` that is trivial to patch from the script that builds the combined ROM, and then there are a few hardcoded offsets, mostly related to audio.
-
-Once all of these are patched, this is the result:
-
-<video autoplay loop muted>
-  <source src="transition.webm" type="video/webm"/>
-  <source src="transition.mp4" type="video/mp4"/>
-</video>
-
-This was, more or less, the state of the project for most of its life, before I seriously started working on it.
-It was a fun proof of concept, but was not really playable in that state.
-The MM menu was still there, creating a save in MM didn't work, it was not possible to go back to OoT, and various anti-piracy measures triggered since the game was started in an unorthodox way. And, of course, nothing was randomized, which is kind of a problem for a randomizer.  
-
-Nowadays, the system is a bit more complex than that, as is the ROM layout. But this is still a good starting point to understand how the system works.
+Check out [part 2](/ootmm-part-02) to learn about the technical implementation.
