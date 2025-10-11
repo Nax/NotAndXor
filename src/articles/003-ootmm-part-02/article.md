@@ -6,12 +6,8 @@ created_at: 2025-09-18
 tags: [Nintendo-64, MIPS, OoTMM]
 ---
 
-For over three years, I have been working on [OoTMM](https://ootmm.com), a combo randomizer in the like of [SMZ3](https://samus.link),
-but for Ocarina of Time and Majora's Mask. I started working on it seriously since around a year.
-It's been out for a few months now<note>At the time of writing, we're at version 14.0.</note>,
-and I'm gonna write a few posts about the development of this project.  
-
-This post is about how the Nintendo 64 loads games, and how Ocarina of Time can be modified to load Majora's Mask.
+In the [previous post](/ootmm-part-01/), I introduced the concept of a combo randomizer, and talked briefly about the OoTMM project. But how exactly does it work?  
+Let's start with the basics - how does a Nintendo 64 game boot? And how can we make it boot another game instead?
 
 ## Booting the Nintendo 64
 

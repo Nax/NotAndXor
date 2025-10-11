@@ -66,6 +66,7 @@ export function Layout({ data, children }: LayoutProps) {
             <SocialLink href="https://ko-fi.com/nax__" icon={IconKoFi} alt="Ko-Fi"/>
             <SocialLink href="/rss.xml" icon={IconRss} alt="RSS"/>
           </div>
+          <p><a href="mailto:max@bacoux.com">Contact me</a></p>
           <p>&copy; 2013 - {year} Maxime Bacoux.<br/>Some rights reserved.</p>
         </footer>
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(ldWebsite) }}/>
