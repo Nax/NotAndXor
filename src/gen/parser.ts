@@ -10,6 +10,7 @@ import rehypeHighlight from 'rehype-highlight';
 import rehypeKatex from 'rehype-katex';
 import { all as allLanguages } from 'lowlight';
 import { visit } from 'unist-util-visit';
+import { visitParents } from 'unist-util-visit-parents';
 
 const rehypeSmallCaps: Plugin<[], Root> = () => (tree) => {
   visit(tree, 'element', (node: Element) => {
@@ -36,42 +37,45 @@ const rehypeAssets: Plugin<[], Root> = () => (tree, file) => {
 };
 
 const rehypeNotes: Plugin<[], Root> = () => (tree) => {
-  let paragraph: Element | null = null;
   let nextNoteId = 1;
 
-  visit(tree, 'element', (node: Element) => {
-    if (node.tagName === 'p') {
-      paragraph = node;
-    }
+  visitParents(tree, 'element', (node: Element, ancestors) => {
+    if (node.tagName !== 'note') return;
 
-    if (node.tagName === 'note') {
-      const noteId = nextNoteId++;
-      const aside: Element = {
-        type: 'element',
-        tagName: 'aside',
-        properties: { id: `note-${noteId}`, className: ['note'] },
-        children: [
-          { type: 'text', value: `${noteId}. ` },
-          ...node.children,
-        ]
-      };
-      const a: Element = {
-        type: 'element',
-        tagName: 'a',
-        properties: { href: `#note-${noteId}`, className: ['note-ref'] },
-        children: [{ type: 'text', value: String(noteId) }],
-      };
-      node.tagName = 'sup';
-      node.children = [
-          { type: 'text', value: '[' },
-          a,
-          { type: 'text', value: ']' },
-      ];
+    const noteId = nextNoteId++;
 
-      if (paragraph) {
-        paragraph.children = [aside, ...paragraph.children];
-      }
-    }
+    const aside: Element = {
+      type: 'element',
+      tagName: 'aside',
+      properties: { id: `note-${noteId}`, className: ['note'] },
+      children: [
+        { type: 'text', value: `${noteId}. ` },
+        ...node.children,
+      ],
+    };
+
+    const a: Element = {
+      type: 'element',
+      tagName: 'a',
+      properties: { href: `#note-${noteId}`, className: ['note-ref'] },
+      children: [{ type: 'text', value: String(noteId) }],
+    };
+
+    node.tagName = 'sup';
+    node.children = [
+      { type: 'text', value: '[' },
+      a,
+      { type: 'text', value: ']' },
+    ];
+
+    const paraIndex = ancestors.findLastIndex(a => (a as Element).tagName === 'p');
+    if (paraIndex === -1) return;
+    const para = ancestors[paraIndex] as Element;
+    const paraParent = ancestors[paraIndex - 1];
+    if (!paraParent) return;
+    const paraIndexInParent = (paraParent.children).indexOf(para);
+    if (paraIndexInParent === -1) return;
+    paraParent.children.splice(paraIndexInParent, 0, aside);
   });
 };
 
