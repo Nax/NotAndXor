@@ -8,7 +8,7 @@ import { buildCss } from './tasks/css';
 import { CONFIG } from './config';
 import { PageData } from './types';
 import { getArticles } from './articles';
-import { buildRss } from './tasks/rss';
+import { buildFeed } from './tasks/feed';
 import { buildStatic } from './tasks/static';
 import { buildFavicons } from './tasks/favicons';
 import { buildSitemap } from './tasks/sitemap';
@@ -41,7 +41,7 @@ export async function build(builder: Builder, watchCallback?: () => void) {
     promises.push(buildBlogArticle(builder, a, pageData));
   }
   promises.push(buildStatic(builder));
-  promises.push(buildRss(builder, articles));
+  promises.push(buildFeed(builder, articles));
   promises.push(buildSitemap(builder, articles));
 
   await Promise.all(promises);
