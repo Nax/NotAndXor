@@ -19,6 +19,12 @@
   --color-cyan:       hsl(215, 80%, 40%);
 }
 
+body {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+}
+
 ul, ol {
   list-style: none;
   padding: 0;
@@ -65,12 +71,6 @@ article {
 }
 
 @media (min-width: 1280px) {
-  body {
-    display: flex;
-    min-height: 100vh;
-    flex-direction: column;
-  }
-
   article {
     margin-left: -100px;
     margin-right: 100px;
@@ -98,9 +98,11 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 main {
-  margin: 0 auto;
-  max-width: 900px;
   flex: 1;
+  margin: 0 auto;
+  max-width: 800px;
+  width: 100%;
+  padding: 2rem;
 }
 
 .prose {
@@ -132,7 +134,7 @@ main {
 
 .prose p {
   text-align: justify;
-  line-height: 1.1;
+  line-height: 1.35;
   margin: 1.5rem 0;
 }
 
@@ -172,7 +174,7 @@ pre, code {
 pre > .hljs {
   padding: 0;
   margin: 0;
-  font-size: 1rem;
+  font-size: 0.9rem;
 }
 
 pre code.hljs {
@@ -234,8 +236,11 @@ footer a {
 
 .article-header {
   font-family: var(--font-sans);
-  font-size: 120%;
-  max-width: 800px;
+}
+
+.article {
+  margin: 0 auto;
+  max-width: 80ch;
   margin-bottom: 3rem;
 }
 
