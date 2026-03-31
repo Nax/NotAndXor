@@ -161,7 +161,7 @@ main {
   font-variant-caps: petite-caps;
 }
 
-header {
+.header {
   text-align: center;
 }
 
@@ -179,16 +179,16 @@ pre code.hljs {
   padding: 0.5rem;
 }
 
-header {
+.header {
   margin: 4rem auto;
 }
 
-header h1 {
+.header h1 {
   font-weight: lighter;
   font-variant: small-caps;
 }
 
-header a {
+.header a {
   display: inline-block;
   color: inherit;
   text-decoration: none;
@@ -197,7 +197,7 @@ header a {
   padding: 0.5rem;
 }
 
-header a:hover {
+.header a:hover {
   background: black;
   color: white;
 }
@@ -232,35 +232,33 @@ footer a {
   color: #ccc;
 }
 
-.article-card {
+.article-header {
   font-family: var(--font-sans);
   font-size: 120%;
   max-width: 800px;
-  display: flex;
-  flex-direction: column;
   margin-bottom: 3rem;
 }
 
-a.article-card {
+.article-header a {
   color: inherit;
   text-decoration: none;
 }
 
-a.article-card:hover .article-card-title {
+.article-header a:hover, .article-header-title {
   text-decoration: underline;
 }
 
-.article-card-title {
+.article-header-title {
   font-weight: bold;
   font-size: 150%;
   color: inherit;
   text-decoration: none;
 }
 
-.article-card-date {
+.article-header-date {
   color: #444;
 }
 
-.article-card-description {
+.article-header-description {
   font-style: italic;
 }

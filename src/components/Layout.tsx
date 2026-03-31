@@ -54,7 +54,7 @@ export function Layout({ data, children }: LayoutProps) {
       </head>
       <head dangerouslySetInnerHTML={{ __html: data.favicons.join('') }}/>
       <body>
-        <header>
+        <header class="header">
           <h1><a href='/'>Not And Xor</a></h1>
         </header>
         <main>{children}</main>

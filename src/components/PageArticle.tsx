@@ -1,17 +1,13 @@
-import { Article } from '../gen/articles';
-import { ArticleCard } from './ArticleCard';
+import { Article as ArticleData } from '../gen/articles';
+import { Article } from './Article';
 import { Giscus } from './Giscus';
 
 type PageArticleProps = {
-  article: Article;
+  article: ArticleData;
   html: string;
 };
 export function PageArticle({ article, html }: PageArticleProps) {
   return (
-    <article>
-      <ArticleCard article={article}/>
-      <div class="prose" dangerouslySetInnerHTML={{ __html: html }}/>
-      <Giscus/>
-    </article>
+    <Article article={article} html={html}/>
   );
 }

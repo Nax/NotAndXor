@@ -1,11 +1,11 @@
-import { Article } from '../gen/articles';
-import { ArticleCard } from './ArticleCard';
+import { Article as ArticleData } from '../gen/articles';
+import { Article } from './Article';
 
 type PageIndexProps = {
-  articles: Article[];
+  articles: ArticleData[];
 };
 export function PageIndex({ articles }: PageIndexProps) {
   return (
-    <ol>{articles.map(article => <li key={article.slug}><ArticleCard link article={article}/></li>)}</ol>
+    <ol>{articles.map(article => <li key={article.slug}><Article article={article}/></li>)}</ol>
   );
 }
