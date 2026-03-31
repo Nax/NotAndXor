@@ -40,6 +40,9 @@ ul, ol {
   margin-bottom: 4rem;
 }
 
+.prose aside {
+  color: var(--color-gray);
+}
 
 article {
   margin-bottom: 4rem;
@@ -58,7 +61,6 @@ article {
   .prose aside {
     order: 1;
     margin-top: 2rem;
-    color: var(--color-gray);
   }
 }
 
