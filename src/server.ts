@@ -12,7 +12,7 @@ async function devServer() {
   await build(builder);
 
   /* Run the dev server */
-  const server = express();
+  const app = express();
   const handle: express.RequestHandler = (req, res, next) => {
     const pathComponents = req.path.split('/').filter(c => c.length > 0);
     let paths: string[];
@@ -34,8 +34,8 @@ async function devServer() {
     }
     next();
   };
-  server.use(handle);
-  server.listen(PORT, () => {
+  app.use(handle);
+  app.listen(PORT, '0.0.0.0', () => {
     console.log(`Dev server listening at http://localhost:${PORT}/`);
   });
 }

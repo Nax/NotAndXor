@@ -1,97 +1,93 @@
-import { JSDOM } from 'jsdom';
-import { marked } from 'marked';
-import markedKatex from 'marked-katex-extension';
-import hljs from 'highlight.js';
+import type { Root, Element } from 'hast';
+import type { Plugin } from 'unified';
 
-marked.use(markedKatex({}));
+import { unified } from 'unified';
+import remarkParse from 'remark-parse';
+import remarkRehype from 'remark-rehype';
+import rehypeRaw from 'rehype-raw';
+import rehypeStringify from 'rehype-stringify';
+import rehypeHighlight from 'rehype-highlight';
+import rehypeKatex from 'rehype-katex';
+import { all as allLanguages } from 'lowlight';
+import { visit } from 'unist-util-visit';
 
-const findParentParagraph = (node: Element): Element | null => {
-  if (node.tagName === 'p' || node.tagName === 'P')
-    return node;
-  const parent = node.parentElement;
-  if (!parent) return null;
-  return findParentParagraph(parent);
-}
-
-const transformSmallCaps = (document: Document) => {
-  const sc = document.getElementsByTagName('sc');
-  for (let i = 0; i < sc.length; ++i) {
-    const e = sc.item(i)!;
-    const n = document.createElement('span');
-    n.classList.add('small-caps');
-    n.innerHTML = e.innerHTML;
-    const parent = e.parentElement;
-    if (parent) {
-      parent.replaceChild(n, e);
+const rehypeSmallCaps: Plugin<[], Root> = () => (tree) => {
+  visit(tree, 'element', (node: Element) => {
+    if (node.tagName === 'sc') {
+      node.tagName = 'span';
+      node.properties = { ...node.properties, className: ['small-caps'] };
     }
-  }
+  });
 };
 
-function transformCode(document: Document) {
-  const codeBlocks = Array.from(document.getElementsByTagName('code')).filter(x => x.parentElement?.tagName === 'PRE');
-  for (const el of codeBlocks) {
-    hljs.highlightElement(el);
-  }
-}
-
-const transformNotes = (document: Document) => {
-  const notes = Array.from(document.getElementsByTagName('note'));
-
-  for (let i = 0; i < notes.length; ++i) {
-    const note = notes[i];
-    const num = i + 1;
-    const name = note.attributes.getNamedItem('name')?.value || num.toString();
-    const link = document.createElement('a');
-    link.href = `#${name}`;
-    link.text = name;
-    const ref = document.createElement('sup');
-    ref.append(document.createTextNode('['));
-    ref.append(link);
-    ref.append(document.createTextNode(']'));
-    ref.classList.add('note-ref');
-    const aside = document.createElement('aside');
-    aside.innerHTML = note.innerHTML;
-    aside.prepend(document.createTextNode(`${num}. `));
-    aside.setAttribute('id', name);
-    const parentP = findParentParagraph(note);
-    if (parentP) {
-      parentP.before(aside);
+const rehypeAssets: Plugin<[], Root> = () => (tree, file) => {
+  const assets = file.data.assets as Map<string, string>;
+  visit(tree, 'element', (node: Element) => {
+    if (['img', 'source'].includes(node.tagName)) {
+      const src = node.properties?.src;
+      if (typeof src === 'string') {
+        const assetContent = assets.get(src);
+        if (assetContent) {
+          node.properties.src = assetContent;
+        }
+      }
     }
-    const parent = note.parentElement;
-    if (parent) {
-      parent.replaceChild(ref, note);
-    }
-  }
+  });
 };
 
-const transformAssets = (document: Document, assets: Map<string, string>) => {
-  const imgs = document.getElementsByTagName('img');
-  for (let i = 0; i < imgs.length; ++i) {
-    const img = imgs.item(i)!;
-    const src = img.attributes.getNamedItem('src')?.value;
-    if (src && assets.has(src)) {
-      img.src = assets.get(src)!;
-    }
-  }
+const rehypeNotes: Plugin<[], Root> = () => (tree) => {
+  let paragraph: Element | null = null;
+  let nextNoteId = 1;
 
-  const sources = document.getElementsByTagName('source');
-  for (let i = 0; i < sources.length; ++i) {
-    const source = sources.item(i)!;
-    const src = source.attributes.getNamedItem('src')?.value;
-    if (src && assets.has(src)) {
-      source.src = assets.get(src)!;
+  visit(tree, 'element', (node: Element) => {
+    if (node.tagName === 'p') {
+      paragraph = node;
     }
-  }
+
+    if (node.tagName === 'note') {
+      const noteId = nextNoteId++;
+      const aside: Element = {
+        type: 'element',
+        tagName: 'aside',
+        properties: { id: `note-${noteId}`, className: ['note'] },
+        children: [
+          { type: 'text', value: `${noteId}. ` },
+          ...node.children,
+        ]
+      };
+      const a: Element = {
+        type: 'element',
+        tagName: 'a',
+        properties: { href: `#note-${noteId}`, className: ['note-ref'] },
+        children: [{ type: 'text', value: String(noteId) }],
+      };
+      node.tagName = 'sup';
+      node.children = [
+          { type: 'text', value: '[' },
+          a,
+          { type: 'text', value: ']' },
+      ];
+
+      if (paragraph) {
+        paragraph.children = [aside, ...paragraph.children];
+      }
+    }
+  });
 };
+
+const pipeline = unified()
+  .use(remarkParse)
+  .use(remarkRehype, { allowDangerousHtml: true })
+  .use(rehypeRaw)
+  .use(rehypeHighlight, { languages: allLanguages })
+  .use(rehypeKatex)
+  .use(rehypeSmallCaps)
+  .use(rehypeAssets)
+  .use(rehypeNotes)
+  .use(rehypeStringify);
 
 export async function articleHtml(content: string, assets: Map<string, string>): Promise<string> {
-  const parsed = await marked(content);
-  const { document } = (new JSDOM(parsed)).window;
-
-  transformSmallCaps(document);
-  transformCode(document);
-  transformNotes(document);
-  transformAssets(document, assets);
-
-  return document.body.innerHTML;
+  const data = await pipeline.process({ value: content, data: { assets } });
+  const html = String(data);
+  return html;
 };
