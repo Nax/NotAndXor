@@ -30,9 +30,6 @@ importers:
       '@types/postcss-import':
         specifier: ^14.0.3
         version: 14.0.3
-      '@types/strftime':
-        specifier: ^0.9.8
-        version: 0.9.8
       cross-env:
         specifier: ^10.1.0
         version: 10.1.0
@@ -93,9 +90,6 @@ importers:
       sitemap:
         specifier: ^9.0.1
         version: 9.0.1
-      strftime:
-        specifier: ^0.10.3
-        version: 0.10.3
       tsx:
         specifier: ^4.21.0
         version: 4.21.0
@@ -740,9 +734,6 @@ packages:
 
   '@types/sax@1.2.7':
     resolution: {integrity: sha512-rO73L89PJxeYM3s3pPPjiPgVVcymqU490g0YO5n5By0k2Erzj6tay/4lr1CHAAU4JyOWd1rpQ8bCf6cZfHU96A==}
-
-  '@types/strftime@0.9.8':
-    resolution: {integrity: sha512-QIvDlGAKyF3YJbT3QZnfC+RIvV5noyDbi+ZJ5rkaSRqxCGrYJefgXm3leZAjtoQOutZe1hCXbAg+p89/Vj4HlQ==}
 
   '@types/unist@3.0.3':
     resolution: {integrity: sha512-ko/gIFJRv177XgZsZcBwnqJN5x/Gien8qNOn0D5bQU/zAzVf9Zt3BlcUiLqhV9y4ARk0GbT3tnUiPNgnTXzc/Q==}
@@ -1639,10 +1630,6 @@ packages:
   sprintf-js@1.0.3:
     resolution: {integrity: sha512-D9cPgkvLlV3t3IzL0D0YLvGA9Ahk4PcvVwUbN0dSGr1aP0Nrt4AEnTUbuGvquEC0mA64Gqt1fzirlRs5ibXx8g==}
 
-  strftime@0.10.3:
-    resolution: {integrity: sha512-DZrDUeIF73eKJ4/GgGuv8UHWcUQPYDYfDeQFj3jrx+JZl6GQE656MbHIpvbo4mEG9a5DgS8GRCc5DxJXD2udDQ==}
-    engines: {node: '>=0.2.0'}
-
   stringify-entities@4.0.4:
     resolution: {integrity: sha512-IwfBptatlO+QCJUo19AqvrPNqlVMpW9YEL2LIVY+Rpv2qsjCGxaDLNRgeGsQWJhfItebuJhsGSLjaBbNSQ+ieg==}
 
@@ -2276,8 +2263,6 @@ snapshots:
   '@types/sax@1.2.7':
     dependencies:
       '@types/node': 25.5.0
-
-  '@types/strftime@0.9.8': {}
 
   '@types/unist@3.0.3': {}
 
@@ -3469,8 +3454,6 @@ snapshots:
   space-separated-tokens@2.0.2: {}
 
   sprintf-js@1.0.3: {}
-
-  strftime@0.10.3: {}
 
   stringify-entities@4.0.4:
     dependencies:

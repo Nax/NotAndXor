@@ -1,4 +1,3 @@
-import strftime from 'strftime';
 import { ComponentChildren } from 'preact';
 
 import { Article as ArticleData } from '../gen/articles';
@@ -9,7 +8,7 @@ type ArticleProps = {
 }
 export function Article({ article, html }: ArticleProps) {
   const isPreview = !html;
-  const date = strftime('%B %d, %Y', article.createdAt);
+  const date = article.createdAt.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
 
   const LinkWrapper = ({children}: {children: ComponentChildren}) => isPreview ? <a href={`/${article.slug}`}>{children}</a> : children;
   const className = ['article'];
