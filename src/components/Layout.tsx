@@ -49,7 +49,6 @@ export function Layout({ data, children }: LayoutProps) {
         {data.canonicalUrl && <link rel='canonical' href={data.canonicalUrl}/>}
         <title>{data.title}</title>
         <link rel='stylesheet' href={`/${data.css}`}/>
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.44/dist/katex.min.css" integrity="sha384-irXK0JiCGinqGL+slwVklbhJetrjczNwaP2lANewD8lKAs9n61SbQ3As28iSqXUE" crossorigin="anonymous"/>
         {data.meta.map((m, i) => <meta key={i} name={m.name} property={m.property} content={m.content}/>)}
         <script async src="https://scripts.simpleanalyticscdn.com/latest.js"/>
         <link rel="icon" href={data.favicons.svg.path} type="image/svg+xml"/>

@@ -8,7 +8,7 @@ import remarkRehype from 'remark-rehype';
 import rehypeRaw from 'rehype-raw';
 import rehypeStringify from 'rehype-stringify';
 import rehypePrettyCode from 'rehype-pretty-code';
-import rehypeKatex from 'rehype-katex';
+import rehypeMathjax from 'rehype-mathjax/svg';
 import { visit, SKIP } from 'unist-util-visit';
 import { visitParents } from 'unist-util-visit-parents';
 
@@ -131,7 +131,7 @@ const pipeline = unified()
   .use(remarkRehype, { allowDangerousHtml: true })
   .use(rehypeRaw)
   .use(rehypePrettyCode, { defaultLang: 'plaintext', theme: 'dark-plus' })
-  .use(rehypeKatex)
+  .use(rehypeMathjax)
   .use(rehypeSmallCaps)
   .use(rehypeImages)
   .use(rehypeVideos)
