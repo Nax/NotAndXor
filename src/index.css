@@ -1,10 +1,21 @@
-@import "../node_modules/modern-normalize/modern-normalize.css";
-@import "../node_modules/katex/dist/katex.min.css";
+@import "../node_modules/@fontsource/martian-mono/latin-400.css";
+@import "../node_modules/@fontsource/inter/latin-400.css";
+@import "../node_modules/@fontsource/inter/latin-400-italic.css";
+@import "../node_modules/@fontsource/inter/latin-700.css";
+@import "../node_modules/@fontsource/inter/latin-700-italic.css";
+@import "../node_modules/@fontsource/source-serif-4/latin-400.css";
+@import "../node_modules/@fontsource/source-serif-4/latin-400-italic.css";
+@import "../node_modules/@fontsource/source-serif-4/latin-700.css";
+@import "../node_modules/@fontsource/source-serif-4/latin-700-italic.css";
+
+* {
+  box-sizing: border-box;
+}
 
 :root {
-  --font-serif: "Times", "Times New Roman", serif;
-  --font-sans:  "Helvetica Neue", "Helvetica", "OpenSans", "Arial", sans-serif;
-  --font-mono:  "Courier New";
+  --font-serif: "Source Serif 4", "Times", "Times New Roman", serif;
+  --font-sans:  "Inter", "Helvetica Neue", "Helvetica", "OpenSans", "Arial", sans-serif;
+  --font-mono:  "Martian Mono", "Courier New", "Courier", monospace;
 
   --color-bg: #f2f2f2;
   --color-fg: #141414;
@@ -17,6 +28,7 @@
 }
 
 body {
+  margin: 0;
   display: flex;
   min-height: 100vh;
   flex-direction: column;
@@ -168,11 +180,15 @@ figure {
   margin: 0;
 }
 
-pre {
+code {
   font-family: var(--font-mono);
-  padding: 0.5rem;
+  font-size: 0.7em;
   overflow-x: auto;
-  font-size: 0.9rem;
+  padding: 0.1em 0.2em;
+}
+
+pre code {
+  padding: 0.25em 0.5em;
 }
 
 .header {

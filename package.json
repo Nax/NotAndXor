@@ -41,7 +41,8 @@
     "unist-util-visit-parents": "^6.0.2"
   },
   "dependencies": {
-    "katex": "^0.16.44",
-    "modern-normalize": "^3.0.1"
+    "@fontsource/inter": "^5.2.8",
+    "@fontsource/martian-mono": "^5.2.7",
+    "@fontsource/source-serif-4": "^5.2.9"
   }
 }
