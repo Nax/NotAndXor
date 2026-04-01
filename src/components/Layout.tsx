@@ -45,18 +45,18 @@ export function Layout({ data, children }: LayoutProps) {
     <html lang='en-US' prefix="og: http://ogp.me/ns#">
       <head>
         <meta charSet='utf-8'/>
+        <style dangerouslySetInnerHTML={{ __html: data.css.inline }}/>
+        <link rel='stylesheet' href={`/${data.css.path}`}/>
+        <script async src="https://scripts.simpleanalyticscdn.com/latest.js"/>
         <meta name='viewport' content='width=device-width, initial-scale=1'/>
         {data.canonicalUrl && <link rel='canonical' href={data.canonicalUrl}/>}
         <title>{data.title}</title>
-        {data.fonts.map((f, i) => <link key={i} rel='preload' as='font' type="font/woff2" crossorigin='anonymous' href={`/${f}`}/>)}
-        <link rel='stylesheet' href={`/${data.css}`}/>
-        {data.meta.map((m, i) => <meta key={i} name={m.name} property={m.property} content={m.content}/>)}
-        <script async src="https://scripts.simpleanalyticscdn.com/latest.js"/>
         <link rel="icon" href={data.favicons.svg.path} type="image/svg+xml"/>
         {data.favicons.png.map(f => (
           <link key={f.size} rel="icon" type="image/png" sizes={`${f.size}x${f.size}`} href={f.path}/>
         ))}
         <link rel="icon" sizes="32x32" type="image/x-icon" href="/favicon.ico"/>
+        {data.meta.map((m, i) => <meta key={i} name={m.name} property={m.property} content={m.content}/>)}
       </head>
       <body>
         <header class="header">

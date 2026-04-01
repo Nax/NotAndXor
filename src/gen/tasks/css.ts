@@ -19,10 +19,11 @@ const MIME_TYPES: Record<string, string> = {
   '.otf': 'font/otf',
 };
 
-export async function buildCss(builder: Builder) {
+async function bundleCss(builder: Builder, src: string) {
   const dirname = path.dirname(fileURLToPath(import.meta.url));
-  const rootDir = path.resolve(dirname, '../../..');
-  const inputFile = path.resolve(path.join(dirname, '../../index.css'));
+  const rootDir = path.resolve(dirname, '../..');
+  const inputFile = path.resolve(path.join(rootDir, src));
+  console.log(inputFile);
 
   const { dependencies, code } = await bundle({
     projectRoot: rootDir,
@@ -44,10 +45,6 @@ export async function buildCss(builder: Builder) {
     const outputFilePath = ['fonts/', CONFIG.dev ? path.basename(filePath) : '[hash]' + ext].join('');
     const outputFile = builder.emit({ name: outputFilePath, content, mimeType });
     depsMap.set(key, outputFile.name);
-
-    if (filePath.endsWith('.woff2') && (filePath.includes('inter-latin-400-normal') || filePath.includes('source-serif-4-latin-400-normal'))) {
-      preloadedFonts.add(outputFile.name);
-    }
   }));
 
   /* Replace the placeholders */
@@ -56,7 +53,16 @@ export async function buildCss(builder: Builder) {
     codeText = codeText.replaceAll(placeholder, '/' + outputPath);
   }
 
-  const cssOut = builder.emit({ name: CONFIG.dev ? 'app.css' : 'app.[hash].min.css', content: codeText, mimeType: 'text/css' });
+  return codeText;
+}
 
-  return { css: cssOut, fonts: [...preloadedFonts] };
+export async function buildCss(builder: Builder) {
+  const [css, inline] = await Promise.all([
+    bundleCss(builder, 'index.css'),
+    bundleCss(builder, 'index.inline.css'),
+  ]);
+
+  const cssOut = builder.emit({ name: CONFIG.dev ? 'app.css' : 'app.[hash].min.css', content: css, mimeType: 'text/css' });
+
+  return { css: cssOut.name, inline };
 }
