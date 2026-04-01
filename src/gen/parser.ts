@@ -3,6 +3,7 @@ import type { Plugin } from 'unified';
 
 import { unified } from 'unified';
 import remarkParse from 'remark-parse';
+import remarkMath from 'remark-math';
 import remarkRehype from 'remark-rehype';
 import rehypeRaw from 'rehype-raw';
 import rehypeStringify from 'rehype-stringify';
@@ -81,6 +82,7 @@ const rehypeNotes: Plugin<[], Root> = () => (tree) => {
 
 const pipeline = unified()
   .use(remarkParse)
+  .use(remarkMath)
   .use(remarkRehype, { allowDangerousHtml: true })
   .use(rehypeRaw)
   .use(rehypeHighlight, { languages: allLanguages })

@@ -1,8 +1,6 @@
-@charset "utf-8";
-
-@import "modern-normalize";
-@import "highlight.js/styles/base16/ia-dark.css";
-@import "katex/dist/katex.min.css";
+@import "../node_modules/modern-normalize/modern-normalize.css";
+@import "../node_modules/highlight.js/styles/base16/ia-dark.css";
+@import "../node_modules/katex/dist/katex.min.css";
 
 :root {
   --font-serif: "Times", "Times New Roman", serif;
