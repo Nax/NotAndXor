@@ -7,9 +7,8 @@ import remarkMath from 'remark-math';
 import remarkRehype from 'remark-rehype';
 import rehypeRaw from 'rehype-raw';
 import rehypeStringify from 'rehype-stringify';
-import rehypeHighlight from 'rehype-highlight';
+import rehypePrettyCode from 'rehype-pretty-code';
 import rehypeKatex from 'rehype-katex';
-import { all as allLanguages } from 'lowlight';
 import { visit } from 'unist-util-visit';
 import { visitParents } from 'unist-util-visit-parents';
 
@@ -85,7 +84,7 @@ const pipeline = unified()
   .use(remarkMath)
   .use(remarkRehype, { allowDangerousHtml: true })
   .use(rehypeRaw)
-  .use(rehypeHighlight, { languages: allLanguages })
+  .use(rehypePrettyCode, { defaultLang: 'plaintext', theme: 'dark-plus' })
   .use(rehypeKatex)
   .use(rehypeSmallCaps)
   .use(rehypeAssets)

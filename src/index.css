@@ -1,5 +1,4 @@
 @import "../node_modules/modern-normalize/modern-normalize.css";
-@import "../node_modules/highlight.js/styles/base16/ia-dark.css";
 @import "../node_modules/katex/dist/katex.min.css";
 
 :root {
@@ -165,18 +164,15 @@ main {
   text-align: center;
 }
 
-pre, code {
-  font-family: var(--font-mono);
-}
-
-pre > .hljs {
-  padding: 0;
+figure {
   margin: 0;
-  font-size: 0.9rem;
 }
 
-pre code.hljs {
+pre {
+  font-family: var(--font-mono);
   padding: 0.5rem;
+  overflow-x: auto;
+  font-size: 0.9rem;
 }
 
 .header {
