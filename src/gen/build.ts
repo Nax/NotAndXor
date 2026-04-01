@@ -13,6 +13,7 @@ import { buildFeed } from './tasks/feed';
 import { buildStatic } from './tasks/static';
 import { buildFavicons } from './tasks/favicons';
 import { buildSitemap } from './tasks/sitemap';
+import { buildMeta } from './tasks/meta';
 
 function watch(name: string, callback: () => void) {
   const dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -60,6 +61,8 @@ export async function build(builder: Builder, watchCallback?: () => void) {
         }
       });
     }
+  } else {
+    await buildMeta(builder);
   }
 }
 
