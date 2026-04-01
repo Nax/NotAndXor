@@ -39,10 +39,18 @@ async function imageAssets(builder: Builder, article: Article): Promise<OutputFi
 
   const promises = images.map(async img => {
     const src = article.dir + '/' + img;
-    const content = await fs.readFile(src);
+    let content: Buffer = await fs.readFile(src);
+    let contentHash = crypto.createHash('sha256').update(content).digest('hex').slice(0, 8);
+    const meta = await sharp(content).metadata();
+
+    if (meta.width > 800) {
+      /* We want to downsize larger images */
+      content = await cache(`resize:${contentHash}:800`, () => sharp(content).resize({ width: 800 }).toBuffer());
+      contentHash = crypto.createHash('sha256').update(content).digest('hex').slice(0, 8);
+    }
+
     const results: OutputFile[] = [];
     results.push(emitAsset(builder, article, src, content));
-    const contentHash = crypto.createHash('sha256').update(content).digest('hex').slice(0, 8);
 
     const versions = await Promise.all([
       convertWebp(contentHash, content).then(x => ({ content: x, ext: '.webp' })),
