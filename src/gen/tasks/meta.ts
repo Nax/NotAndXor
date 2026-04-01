@@ -23,14 +23,6 @@ const HEADER_RULES: HeaderRule[] = [
       'Cache-Control': ['public', 'max-age=31536000', 'immutable'],
     }
   },
-  {
-    paths: [
-      '/*.html', '/*',
-    ],
-    headers: {
-      'Cache-Control': ['public', 'max-age=300'],
-    }
-  }
 ];
 
 export async function buildMeta(builder: Builder): Promise<void> {
