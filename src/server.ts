@@ -1,4 +1,5 @@
-import express from 'express';
+import http from 'node:http';
+
 import { Builder } from './gen/builder';
 import { build } from './gen/build';
 import { OutputFile } from './gen/types';
@@ -12,9 +13,8 @@ async function devServer() {
   await build(builder);
 
   /* Run the dev server */
-  const app = express();
-  const handle: express.RequestHandler = (req, res, next) => {
-    const pathComponents = req.path.split('/').filter(c => c.length > 0);
+  const server = http.createServer((req, res) => {
+    const pathComponents = req.url?.split('/').filter(c => c.length > 0) || [];
     let paths: string[];
     if (pathComponents.length === 0) {
       paths = ['index.html'];
@@ -28,14 +28,12 @@ async function devServer() {
         if (f.mimeType) {
           res.setHeader('Content-Type', f.mimeType);
         }
-        res.send(f.content);
+        res.end(f.content);
         return;
       }
     }
-    next();
-  };
-  app.use(handle);
-  app.listen(PORT, '0.0.0.0', () => {
+  });
+  server.listen(PORT, '0.0.0.0', () => {
     console.log(`Dev server listening at http://localhost:${PORT}/`);
   });
 }
