@@ -18,10 +18,10 @@ const HEADER_RULES: HeaderRule[] = [
   },
   {
     paths: [
-      '*.css', '*.js',
-      '*.png', '*.svg', '*.jpg', '*.webp',
-      '*.mp4', '*.webm',
-      '*.woff', '*.woff2', '*.ttf', '*.otf',
+      '/*.css', '/*.js',
+      '/*.png', '/*.svg', '/*.jpg', '/*.webp',
+      '/*.mp4', '/*.webm',
+      '/*.woff', '/*.woff2', '/*.ttf', '/*.otf',
     ],
     headers: {
       'Cache-Control': ['public', 'max-age=31536000', 'immutable'],
@@ -29,7 +29,7 @@ const HEADER_RULES: HeaderRule[] = [
   },
   {
     paths: [
-      '*.html',
+      '/*.html',
     ],
     headers: {
       'Cache-Control': ['public', 'max-age=300'],
