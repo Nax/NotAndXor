@@ -26,3 +26,20 @@ export type PageData = {
   meta: PageDataMeta[];
   ld: any[];
 };
+
+type AssetBase = {
+  source: string;
+  path: string;
+};
+
+type AssetImage = AssetBase & {
+  type: 'image';
+  width: number;
+  height: number;
+};
+
+type AssetVideo = AssetBase & {
+  type: 'video';
+};
+
+export type Asset = AssetImage | AssetVideo;

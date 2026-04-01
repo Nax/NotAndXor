@@ -11,6 +11,7 @@ import rehypePrettyCode from 'rehype-pretty-code';
 import rehypeMathjax from 'rehype-mathjax/svg';
 import { visit, SKIP } from 'unist-util-visit';
 import { visitParents } from 'unist-util-visit-parents';
+import { Asset } from './types';
 
 const rehypeSmallCaps: Plugin<[], Root> = () => (tree) => {
   visit(tree, 'element', (node: Element) => {
@@ -22,18 +23,18 @@ const rehypeSmallCaps: Plugin<[], Root> = () => (tree) => {
 };
 
 const rehypeImages: Plugin<[], Root> = () => (tree, file) => {
-  const assets = file.data.assets as Map<string, string>;
+  const assets = file.data.assets as Map<string, Asset>;
   visit(tree, 'element', (node: Element) => {
     if (node.tagName === 'img') {
       const properties = node.properties || {};
       const src = properties.src as string;
-      properties.src = assets.get(src);
-      const height = properties.height;
-      const width = properties.width;
-      delete properties.height;
-      delete properties.width;
+      const asset = assets.get(src)!;
+      if (asset.type !== 'image') return;
+      properties.src = asset.path;
+      properties.width = asset.width!;
+      properties.height = asset.height!;
       node.tagName = 'picture';
-      node.properties = { height, width };
+      node.properties = {};
       const children: Element[] = [];
       const srcWebp = assets.get(src.replace(/\.[^.]+$/, '.webp'));
       const srcAvif = assets.get(src.replace(/\.[^.]+$/, '.avif'));
@@ -41,7 +42,7 @@ const rehypeImages: Plugin<[], Root> = () => (tree, file) => {
         children.push({
           type: 'element',
           tagName: 'source',
-          properties: { srcSet: srcAvif, type: 'image/avif' },
+          properties: { srcSet: srcAvif.path, type: 'image/avif' },
           children: [],
         });
       }
@@ -49,7 +50,7 @@ const rehypeImages: Plugin<[], Root> = () => (tree, file) => {
         children.push({
           type: 'element',
           tagName: 'source',
-          properties: { srcSet: srcWebp, type: 'image/webp' },
+          properties: { srcSet: srcWebp.path, type: 'image/webp' },
           children: [],
         });
       }
@@ -66,17 +67,16 @@ const rehypeImages: Plugin<[], Root> = () => (tree, file) => {
 };
 
 const rehypeVideos: Plugin<[], Root> = () => (tree, file) => {
-  const assets = file.data.assets as Map<string, string>;
+  const assets = file.data.assets as Map<string, Asset>;
   visit(tree, 'element', (node: Element) => {
     if (node.tagName === 'video') {
       const source = node.children.find(c => c.type === 'element' && (c as Element).tagName === 'source') as Element | undefined;
       if (!source) return;
       const src = source.properties?.src;
       if (typeof src === 'string') {
-        const assetContent = assets.get(src);
-        if (assetContent) {
-          source.properties.src = assetContent;
-        }
+        const asset = assets.get(src)!;
+        if (asset.type !== 'video') return;
+        source.properties.src = asset.path;
       }
     }
   });
@@ -138,7 +138,7 @@ const pipeline = unified()
   .use(rehypeNotes)
   .use(rehypeStringify);
 
-export async function articleHtml(content: string, assets: Map<string, string>): Promise<string> {
+export async function articleHtml(content: string, assets: Map<string, Asset>): Promise<string> {
   const data = await pipeline.process({ value: content, data: { assets } });
   const html = String(data);
   return html;

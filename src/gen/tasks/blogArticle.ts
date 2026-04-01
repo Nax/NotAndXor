@@ -6,7 +6,7 @@ import mime from 'mime';
 
 import { cache } from '../util/cache';
 import { Builder } from '../builder';
-import { OutputFile, PageData } from '../types';
+import { Asset, OutputFile, PageData } from '../types';
 import { cloneDeep } from 'lodash-es';
 import { renderHtml } from '../html';
 import { Article } from '../articles';
@@ -33,7 +33,7 @@ async function convertAvif(key: string, content: Buffer): Promise<Buffer> {
   return cache(`avif:${key}`, () => sharp(content).avif({ quality: 50 }).toBuffer());
 }
 
-async function imageAssets(builder: Builder, article: Article): Promise<OutputFile[]> {
+async function imageAssets(builder: Builder, article: Article): Promise<Asset[]> {
   const files = await fs.readdir(article.dir);
   const images = files.filter(f => /\.(png|jpg)$/.test(f));
 
@@ -41,16 +41,18 @@ async function imageAssets(builder: Builder, article: Article): Promise<OutputFi
     const src = article.dir + '/' + img;
     let content: Buffer = await fs.readFile(src);
     let contentHash = crypto.createHash('sha256').update(content).digest('hex').slice(0, 8);
-    const meta = await sharp(content).metadata();
+    let meta = await sharp(content).metadata();
 
     if (meta.width > 800) {
       /* We want to downsize larger images */
       content = await cache(`resize:${contentHash}:800`, () => sharp(content).resize({ width: 800 }).toBuffer());
       contentHash = crypto.createHash('sha256').update(content).digest('hex').slice(0, 8);
+      meta = await sharp(content).metadata();
     }
 
-    const results: OutputFile[] = [];
-    results.push(emitAsset(builder, article, src, content));
+    const results: Asset[] = [];
+    const of = emitAsset(builder, article, src, content);
+    results.push({ type: 'image', width: meta.width!, height: meta.height!, source: of.source!, path: of.name });
 
     const versions = await Promise.all([
       convertWebp(contentHash, content).then(x => ({ content: x, ext: '.webp' })),
@@ -59,7 +61,8 @@ async function imageAssets(builder: Builder, article: Article): Promise<OutputFi
 
     for (const v of versions) {
       const name = img.replace(/\.[^.]+$/, v.ext);
-      results.push(emitAsset(builder, article, name, v.content));
+      const of = emitAsset(builder, article, name, v.content);
+      results.push({ type: 'image', width: meta.width!, height: meta.height!, source: of.source!, path: of.name });
     }
 
     return results;
@@ -68,18 +71,19 @@ async function imageAssets(builder: Builder, article: Article): Promise<OutputFi
   return Promise.all(promises).then(x => x.flat());
 }
 
-async function videoAssets(builder: Builder, article: Article): Promise<OutputFile[]> {
+async function videoAssets(builder: Builder, article: Article): Promise<Asset[]> {
   const files = await fs.readdir(article.dir);
   const videos = files.filter(f => /\.(mp4|webm)$/.test(f));
 
   return Promise.all(videos.map(async video => {
     const src = article.dir + '/' + video;
     const content = await fs.readFile(src);
-    return emitAsset(builder, article, src, content);
+    const of = emitAsset(builder, article, src, content);
+    return { type: 'video', source: of.source!, path: of.name };
   }));
 }
 
-async function articleAssets(builder: Builder, article: Article): Promise<OutputFile[]> {
+async function articleAssets(builder: Builder, article: Article): Promise<Asset[]> {
   const assets = await Promise.all([
     imageAssets(builder, article),
     videoAssets(builder, article),
@@ -90,7 +94,7 @@ async function articleAssets(builder: Builder, article: Article): Promise<Output
 
 export async function buildBlogArticle(builder: Builder, article: Article, pageData: PageData): Promise<OutputFile> {
   const assets = await articleAssets(builder, article);
-  const assetsMap = new Map(assets.map(a => [a.source!, '/' + a.name]));
+  const assetsMap = new Map(assets.map(a => [a.source!, { ...a, path: '/' + a.path }]));
   const canonicalUrl = CONFIG.baseUrl + '/' + article.slug;
 
   pageData = cloneDeep(pageData);

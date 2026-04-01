@@ -44,8 +44,8 @@ It plays somewhat differently from a standard randomizer - not only can you obta
 OoTMM is the project I created, inspired by SMZ3. I found the concept of combo randomizers very interesting, and wanted to replicate that with two other games. Eventually I settled on *The Legend of Zelda: Ocarina of Time* and *The Legend of Zelda: Majora's Mask*, the two very popular Zelda games on the Nintendo 64.
 
 <div style="display: flex; gap: 10px; justify-content: center; align-items: center;">
-  <img width="50%" src="title_oot.png" alt="Screenshot of the title screen of 'The Legend of Zelda: Ocarina of Time'"/>
-  <img width="50%" src="title_mm.png" alt="Screenshot of the title screen of 'The Legend of Zelda: Majora's Mask'"/>
+  <img src="title_oot.png" alt="Screenshot of the title screen of 'The Legend of Zelda: Ocarina of Time'"/>
+  <img src="title_mm.png" alt="Screenshot of the title screen of 'The Legend of Zelda: Majora's Mask'"/>
 </div>
 
 The games are pretty similar on the surface - you play as Link, who must explore dungeons, finding important items on the way allowing to solve puzzles and defeat monsters. The main dungeons contain special "quest" items (stones & medallions in Ocarina of Time, boss remains in Majora's Mask) that eventually allow you to reach the final dungeon, defeat the final boss and complete the game. In other words, the classic Zelda formula, Ocarina of Time in particular being very similar to *A Link to the Past* in its structure.

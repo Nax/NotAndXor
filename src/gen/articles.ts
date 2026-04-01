@@ -4,6 +4,7 @@ import { fileURLToPath } from 'node:url';
 import matter from 'gray-matter';
 import { articleHtml } from './parser';
 import { CONFIG } from './config';
+import { Asset } from './types';
 
 export type Article = {
   dir: string;
@@ -14,7 +15,7 @@ export type Article = {
   updatedAt: Date;
   tags: string[];
   draft: boolean;
-  html: (assets: Map<string, string>) => Promise<string>;
+  html: (assets: Map<string, Asset>) => Promise<string>;
 };
 
 async function makeArticle(dir: string): Promise<Article> {
@@ -32,7 +33,7 @@ async function makeArticle(dir: string): Promise<Article> {
   const tags = data.tags ?? [];
   const draft = data.draft ?? false;
 
-  const html = (assets: Map<string, string>) => articleHtml(content, assets);
+  const html = (assets: Map<string, Asset>) => articleHtml(content, assets);
 
   return { dir: fullDir, title, description, slug, createdAt, updatedAt, tags, draft, html };
 }
