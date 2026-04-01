@@ -51,7 +51,7 @@ export async function buildMeta(builder: Builder): Promise<void> {
     }
     const headersText = perHeaders.join('\n');
     for (const path of rule.paths) {
-      headersBuffer.push(`${path}:\n${headersText}\n`);
+      headersBuffer.push(`${path}\n${headersText}\n`);
     }
   }
 
