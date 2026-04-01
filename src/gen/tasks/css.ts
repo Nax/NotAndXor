@@ -18,7 +18,7 @@ const MIME_TYPES: Record<string, string> = {
   '.otf': 'font/otf',
 };
 
-export async function buildCss(builder: Builder): Promise<OutputFile> {
+export async function buildCss(builder: Builder): Promise<string> {
   const dirname = path.dirname(fileURLToPath(import.meta.url));
   const rootDir = path.resolve(dirname, '../../..');
   const inputFile = path.resolve(path.join(dirname, '../../index.css'));
@@ -51,5 +51,5 @@ export async function buildCss(builder: Builder): Promise<OutputFile> {
     codeText = codeText.replaceAll(placeholder, '/' + outputPath);
   }
 
-  return builder.emit({ name: CONFIG.dev ? 'app.css' : 'app.[hash].min.css', content: codeText, mimeType: 'text/css' });
+  return codeText;
 }

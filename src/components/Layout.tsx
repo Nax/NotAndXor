@@ -46,16 +46,15 @@ export function Layout({ data, children }: LayoutProps) {
       <head>
         <meta charSet='utf-8'/>
         <meta name='viewport' content='width=device-width, initial-scale=1'/>
-        {data.canonicalUrl && <link rel='canonical' href={data.canonicalUrl}/>}
+        <style dangerouslySetInnerHTML={{ __html: data.css }}/>
         <title>{data.title}</title>
-        <link rel='stylesheet' href={`/${data.css}`}/>
-        {data.meta.map((m, i) => <meta key={i} name={m.name} property={m.property} content={m.content}/>)}
-        <script async src="https://scripts.simpleanalyticscdn.com/latest.js"/>
         <link rel="icon" href={data.favicons.svg.path} type="image/svg+xml"/>
         {data.favicons.png.map(f => (
           <link key={f.size} rel="icon" type="image/png" sizes={`${f.size}x${f.size}`} href={f.path}/>
         ))}
         <link rel="icon" sizes="32x32" type="image/x-icon" href="/favicon.ico"/>
+        {data.canonicalUrl && <link rel='canonical' href={data.canonicalUrl}/>}
+        {data.meta.map((m, i) => <meta key={i} name={m.name} property={m.property} content={m.content}/>)}
       </head>
       <body>
         <header class="header">
@@ -78,6 +77,7 @@ export function Layout({ data, children }: LayoutProps) {
         {data.ld.map((ldItem, i) => (
           <script key={i} type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(ldItem) }}/>
         ))}
+        <script async src="https://scripts.simpleanalyticscdn.com/latest.js"/>
       </body>
     </html>
   );
