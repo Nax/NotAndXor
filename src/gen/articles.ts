@@ -1,5 +1,6 @@
 import path from 'node:path';
 import fs from 'node:fs/promises';
+import { fileURLToPath } from 'node:url';
 import matter from 'gray-matter';
 import { articleHtml } from './parser';
 import { CONFIG } from './config';
@@ -17,7 +18,8 @@ export type Article = {
 };
 
 async function makeArticle(dir: string): Promise<Article> {
-  const fullDir = path.resolve(__dirname, '..', dir);
+  const dirname = path.dirname(fileURLToPath(import.meta.url));
+  const fullDir = path.resolve(dirname, '..', dir);
   const file = path.resolve(fullDir, 'article.md');
   const fileData = await fs.readFile(file, 'utf-8');
   const { data, content } = matter(fileData);
@@ -36,7 +38,8 @@ async function makeArticle(dir: string): Promise<Article> {
 }
 
 export async function getArticles(): Promise<Article[]> {
-  const baseDir = path.resolve(__dirname, '../articles');
+  const dirname = path.dirname(fileURLToPath(import.meta.url));
+  const baseDir = path.resolve(dirname, '../articles');
   const files = await fs.readdir(baseDir);
 
   let articles = await Promise.all(files.map(f => makeArticle(path.join(baseDir, f))));

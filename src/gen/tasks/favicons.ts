@@ -1,9 +1,12 @@
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import favicons from 'favicons';
+
 import { Builder } from '../builder';
 
 export async function buildFavicons(builder: Builder): Promise<string[]> {
-  const src = path.resolve(__dirname, '../../favicon.png');
+  const dirname = path.dirname(fileURLToPath(import.meta.url));
+  const src = path.resolve(dirname, '../../favicon.png');
   const data = await favicons(src, {
     icons: {
       favicons: true,

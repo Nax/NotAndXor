@@ -1,5 +1,6 @@
-import path from 'path';
-import fs from 'fs/promises';
+import { fileURLToPath } from 'node:url';
+import path from 'node:path';
+import fs from 'node:fs/promises';
 import postcss from 'postcss';
 import postcssPresetEnv from 'postcss-preset-env';
 import postcssImport from 'postcss-import';
@@ -10,7 +11,8 @@ import { Builder } from '../builder';
 import { OutputFile } from '../types';
 
 export async function buildCss(builder: Builder): Promise<OutputFile> {
-  const inputFile = path.join(__dirname, '../../index.css');
+  const dirname = path.dirname(fileURLToPath(import.meta.url));
+  const inputFile = path.join(dirname, '../../index.css');
   const data = await fs.readFile(inputFile, 'utf-8');
 
   const output = await postcss([

@@ -1,6 +1,6 @@
 import { Builder } from '../builder';
 import { OutputFile, PageData } from '../types';
-import { cloneDeep } from 'lodash';
+import { cloneDeep } from 'lodash-es';
 import { renderHtml } from '../html';
 import { PageIndex } from '../../components/PageIndex';
 import { Article } from '../articles';

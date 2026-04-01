@@ -3,7 +3,7 @@ import path from 'node:path';
 
 import { Builder } from '../builder';
 import { OutputFile, PageData } from '../types';
-import { cloneDeep } from 'lodash';
+import { cloneDeep } from 'lodash-es';
 import { renderHtml } from '../html';
 import { Article } from '../articles';
 import { CONFIG } from '../config';

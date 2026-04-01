@@ -1,5 +1,6 @@
 import path from 'node:path';
 import { watchFile } from 'node:fs';
+import { fileURLToPath } from 'node:url';
 
 import { Builder } from './builder';
 import { buildBlogIndex } from './tasks/blogIndex';
@@ -14,7 +15,8 @@ import { buildFavicons } from './tasks/favicons';
 import { buildSitemap } from './tasks/sitemap';
 
 function watch(name: string, callback: () => void) {
-  const file = path.resolve(__dirname, '..', name);
+  const dirname = path.dirname(fileURLToPath(import.meta.url));
+  const file = path.resolve(dirname, '..', name);
   watchFile(file, { persistent: true, interval: 500 }, (curr, prev) => {
     if (curr.mtimeMs !== prev.mtimeMs) {
       callback();

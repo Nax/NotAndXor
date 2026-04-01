@@ -1,11 +1,13 @@
 import path from 'path';
+import { fileURLToPath } from 'url';
 import fs from 'fs/promises';
 import { Builder } from './gen/builder';
 import { build } from './gen/build';
 import { OutputFile } from './gen/types';
 
 async function buildProduction() {
-  const distPath = path.resolve(__dirname, '../dist');
+  const dirname = path.dirname(fileURLToPath(import.meta.url));
+  const distPath = path.resolve(dirname, '../dist');
   if (await fs.stat(distPath).catch(() => false)) {
     await fs.rm(distPath, { recursive: true });
   }
