@@ -1,6 +1,10 @@
 import fs from 'node:fs/promises';
+import crypto from 'node:crypto';
 import path from 'node:path';
+import sharp from 'sharp';
+import mime from 'mime';
 
+import { cache } from '../util/cache';
 import { Builder } from '../builder';
 import { OutputFile, PageData } from '../types';
 import { cloneDeep } from 'lodash-es';
@@ -9,24 +13,75 @@ import { Article } from '../articles';
 import { CONFIG } from '../config';
 import { PageArticle } from '../../components/PageArticle';
 
-async function buildArticleAssets(builder: Builder, article: Article): Promise<OutputFile[]> {
-  const dir = article.dir;
-  const files = await fs.readdir(dir);
-  const assetsFiles = files.filter(f => /\.(png|jpg|mp4|webm)$/.test(f));
+function articleAssetName(article: Article, name: string): string {
+  const basename = path.basename(name).split('.')[0];
+  const extname = path.extname(name);
+  return [article.slug, '/', basename, CONFIG.dev ? '' : '.[hash]', extname].join('');
+}
 
-  return Promise.all(assetsFiles.map(async (f) => {
-    const src = dir + '/' + f;
-    const basename = path.basename(f).split('.')[0];
-    const extname = path.extname(f);
-    const dst = [article.slug, '/', basename, CONFIG.dev ? '' : '.[hash]', extname].join('');
+function emitAsset(builder: Builder, article: Article, name: string, content: Buffer): OutputFile {
+  const dst = articleAssetName(article, name);
+  const source = path.basename(name);
+  return builder.emit({ source, name: dst, content, mimeType: mime.getType(name) ?? undefined });
+}
+
+async function convertWebp(key: string, content: Buffer): Promise<Buffer> {
+  return cache(`webp:${key}`, () => sharp(content).webp({ quality: 80 }).toBuffer());
+}
+
+async function convertAvif(key: string, content: Buffer): Promise<Buffer> {
+  return cache(`avif:${key}`, () => sharp(content).avif({ quality: 50 }).toBuffer());
+}
+
+async function imageAssets(builder: Builder, article: Article): Promise<OutputFile[]> {
+  const files = await fs.readdir(article.dir);
+  const images = files.filter(f => /\.(png|jpg)$/.test(f));
+
+  const promises = images.map(async img => {
+    const src = article.dir + '/' + img;
     const content = await fs.readFile(src);
+    const results: OutputFile[] = [];
+    results.push(emitAsset(builder, article, src, content));
+    const contentHash = crypto.createHash('sha256').update(content).digest('hex').slice(0, 8);
 
-    return builder.emit({ source: f, name: dst, content });
+    const versions = await Promise.all([
+      convertWebp(contentHash, content).then(x => ({ content: x, ext: '.webp' })),
+      convertAvif(contentHash, content).then(x => ({ content: x, ext: '.avif' })),
+    ]);
+
+    for (const v of versions) {
+      const name = img.replace(/\.[^.]+$/, v.ext);
+      results.push(emitAsset(builder, article, name, v.content));
+    }
+
+    return results;
+  });
+
+  return Promise.all(promises).then(x => x.flat());
+}
+
+async function videoAssets(builder: Builder, article: Article): Promise<OutputFile[]> {
+  const files = await fs.readdir(article.dir);
+  const videos = files.filter(f => /\.(mp4|webm)$/.test(f));
+
+  return Promise.all(videos.map(async video => {
+    const src = article.dir + '/' + video;
+    const content = await fs.readFile(src);
+    return emitAsset(builder, article, src, content);
   }));
 }
 
+async function articleAssets(builder: Builder, article: Article): Promise<OutputFile[]> {
+  const assets = await Promise.all([
+    imageAssets(builder, article),
+    videoAssets(builder, article),
+  ]);
+
+  return assets.flat();
+}
+
 export async function buildBlogArticle(builder: Builder, article: Article, pageData: PageData): Promise<OutputFile> {
-  const assets = await buildArticleAssets(builder, article);
+  const assets = await articleAssets(builder, article);
   const assetsMap = new Map(assets.map(a => [a.source!, '/' + a.name]));
   const canonicalUrl = CONFIG.baseUrl + '/' + article.slug;
 

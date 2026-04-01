@@ -9,7 +9,7 @@ import rehypeRaw from 'rehype-raw';
 import rehypeStringify from 'rehype-stringify';
 import rehypePrettyCode from 'rehype-pretty-code';
 import rehypeKatex from 'rehype-katex';
-import { visit } from 'unist-util-visit';
+import { visit, SKIP } from 'unist-util-visit';
 import { visitParents } from 'unist-util-visit-parents';
 
 const rehypeSmallCaps: Plugin<[], Root> = () => (tree) => {
@@ -21,15 +21,61 @@ const rehypeSmallCaps: Plugin<[], Root> = () => (tree) => {
   });
 };
 
-const rehypeAssets: Plugin<[], Root> = () => (tree, file) => {
+const rehypeImages: Plugin<[], Root> = () => (tree, file) => {
   const assets = file.data.assets as Map<string, string>;
   visit(tree, 'element', (node: Element) => {
-    if (['img', 'source'].includes(node.tagName)) {
-      const src = node.properties?.src;
+    if (node.tagName === 'img') {
+      const properties = node.properties || {};
+      const src = properties.src as string;
+      properties.src = assets.get(src);
+      const height = properties.height;
+      const width = properties.width;
+      delete properties.height;
+      delete properties.width;
+      node.tagName = 'picture';
+      node.properties = { height, width };
+      const children: Element[] = [];
+      const srcWebp = assets.get(src.replace(/\.[^.]+$/, '.webp'));
+      const srcAvif = assets.get(src.replace(/\.[^.]+$/, '.avif'));
+      if (srcAvif) {
+        children.push({
+          type: 'element',
+          tagName: 'source',
+          properties: { srcSet: srcAvif, type: 'image/avif' },
+          children: [],
+        });
+      }
+      if (srcWebp) {
+        children.push({
+          type: 'element',
+          tagName: 'source',
+          properties: { srcSet: srcWebp, type: 'image/webp' },
+          children: [],
+        });
+      }
+      children.push({
+        type: 'element',
+        tagName: 'img',
+        properties,
+        children: [],
+      });
+      node.children = children;
+      return SKIP;
+    }
+  });
+};
+
+const rehypeVideos: Plugin<[], Root> = () => (tree, file) => {
+  const assets = file.data.assets as Map<string, string>;
+  visit(tree, 'element', (node: Element) => {
+    if (node.tagName === 'video') {
+      const source = node.children.find(c => c.type === 'element' && (c as Element).tagName === 'source') as Element | undefined;
+      if (!source) return;
+      const src = source.properties?.src;
       if (typeof src === 'string') {
         const assetContent = assets.get(src);
         if (assetContent) {
-          node.properties.src = assetContent;
+          source.properties.src = assetContent;
         }
       }
     }
@@ -87,7 +133,8 @@ const pipeline = unified()
   .use(rehypePrettyCode, { defaultLang: 'plaintext', theme: 'dark-plus' })
   .use(rehypeKatex)
   .use(rehypeSmallCaps)
-  .use(rehypeAssets)
+  .use(rehypeImages)
+  .use(rehypeVideos)
   .use(rehypeNotes)
   .use(rehypeStringify);
 

@@ -32,6 +32,8 @@ async function devServer() {
         return;
       }
     }
+    res.writeHead(404);
+    res.end('Not found');
   });
   server.listen(PORT, '0.0.0.0', () => {
     console.log(`Dev server listening at http://localhost:${PORT}/`);

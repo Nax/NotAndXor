@@ -15,7 +15,7 @@ const HEADER_RULES: HeaderRule[] = [
   {
     paths: [
       '/*.css', '/*.js',
-      '/*.png', '/*.svg', '/*.jpg', '/*.webp',
+      '/*.png', '/*.svg', '/*.jpg', '/*.webp', '/*.avif',
       '/*.mp4', '/*.webm',
       '/*.woff', '/*.woff2', '/*.ttf', '/*.otf',
     ],
