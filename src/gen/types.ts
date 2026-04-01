@@ -1,3 +1,9 @@
+export type Favicons = {
+  ico: {path: string};
+  svg: {path: string};
+  png: {size: number, path: string}[];
+};
+
 export type OutputFile = {
   source?: string;
   name: string;
@@ -12,7 +18,7 @@ type PageDataMeta = {
 };
 
 export type PageData = {
-  favicons: string[];
+  favicons: Favicons;
   title: string;
   css: string;
   canonicalUrl?: string;

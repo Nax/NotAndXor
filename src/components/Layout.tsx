@@ -52,8 +52,12 @@ export function Layout({ data, children }: LayoutProps) {
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.44/dist/katex.min.css" integrity="sha384-irXK0JiCGinqGL+slwVklbhJetrjczNwaP2lANewD8lKAs9n61SbQ3As28iSqXUE" crossorigin="anonymous"/>
         {data.meta.map((m, i) => <meta key={i} name={m.name} property={m.property} content={m.content}/>)}
         <script async src="https://scripts.simpleanalyticscdn.com/latest.js"/>
+        <link rel="icon" href={data.favicons.svg.path} type="image/svg+xml"/>
+        {data.favicons.png.map(f => (
+          <link key={f.size} rel="icon" type="image/png" sizes={`${f.size}x${f.size}`} href={f.path}/>
+        ))}
+        <link rel="icon" sizes="32x32" type="image/x-icon" href="/favicon.ico"/>
       </head>
-      <head dangerouslySetInnerHTML={{ __html: data.favicons.join('') }}/>
       <body>
         <header class="header">
           <h1><a href='/'>Not And Xor</a></h1>
