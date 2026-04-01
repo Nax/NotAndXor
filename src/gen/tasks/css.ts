@@ -6,11 +6,12 @@ import { bundle, browserslistToTargets } from 'lightningcss';
 
 import { CONFIG } from '../config';
 import { Builder } from '../builder';
-import { OutputFile } from '../types';
 
 const targets = browserslistToTargets(browserslist());
 
 const depsMap = new Map<string, string>();
+const preloadedFonts = new Set<string>();
+
 const MIME_TYPES: Record<string, string> = {
   '.woff': 'font/woff',
   '.woff2': 'font/woff2',
@@ -18,7 +19,7 @@ const MIME_TYPES: Record<string, string> = {
   '.otf': 'font/otf',
 };
 
-export async function buildCss(builder: Builder): Promise<OutputFile> {
+export async function buildCss(builder: Builder) {
   const dirname = path.dirname(fileURLToPath(import.meta.url));
   const rootDir = path.resolve(dirname, '../../..');
   const inputFile = path.resolve(path.join(dirname, '../../index.css'));
@@ -43,6 +44,10 @@ export async function buildCss(builder: Builder): Promise<OutputFile> {
     const outputFilePath = ['fonts/', CONFIG.dev ? path.basename(filePath) : '[hash]' + ext].join('');
     const outputFile = builder.emit({ name: outputFilePath, content, mimeType });
     depsMap.set(key, outputFile.name);
+
+    if (filePath.endsWith('.woff2') && (filePath.includes('inter-latin-400-normal') || filePath.includes('source-serif-4-latin-400-normal'))) {
+      preloadedFonts.add(outputFile.name);
+    }
   }));
 
   /* Replace the placeholders */
@@ -51,5 +56,7 @@ export async function buildCss(builder: Builder): Promise<OutputFile> {
     codeText = codeText.replaceAll(placeholder, '/' + outputPath);
   }
 
-  return builder.emit({ name: CONFIG.dev ? 'app.css' : 'app.[hash].min.css', content: codeText, mimeType: 'text/css' });
+  const cssOut = builder.emit({ name: CONFIG.dev ? 'app.css' : 'app.[hash].min.css', content: codeText, mimeType: 'text/css' });
+
+  return { css: cssOut, fonts: [...preloadedFonts] };
 }

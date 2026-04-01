@@ -21,6 +21,7 @@ export type PageData = {
   favicons: Favicons;
   title: string;
   css: string;
+  fonts: string[];
   canonicalUrl?: string;
   meta: PageDataMeta[];
   ld: any[];

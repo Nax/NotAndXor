@@ -48,6 +48,7 @@ export function Layout({ data, children }: LayoutProps) {
         <meta name='viewport' content='width=device-width, initial-scale=1'/>
         {data.canonicalUrl && <link rel='canonical' href={data.canonicalUrl}/>}
         <title>{data.title}</title>
+        {data.fonts.map((f, i) => <link key={i} rel='preload' as='font' href={`/${f}`}/>)}
         <link rel='stylesheet' href={`/${data.css}`}/>
         {data.meta.map((m, i) => <meta key={i} name={m.name} property={m.property} content={m.content}/>)}
         <script async src="https://scripts.simpleanalyticscdn.com/latest.js"/>
