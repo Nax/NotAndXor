@@ -1,6 +1,7 @@
 import { ComponentChildren } from 'preact';
 
 import { Article as ArticleData } from '../gen/articles';
+import { Giscus } from './Giscus';
 
 type ArticleProps = {
   article: ArticleData;
@@ -27,7 +28,10 @@ export function Article({ article, html }: ArticleProps) {
           <div class="article-header-description">{article.description}</div>
         </LinkWrapper>
       </header>
-      {!isPreview && <div class="article-body prose" dangerouslySetInnerHTML={{__html: html}}/>}
+      {!isPreview && <>
+        <div class="article-body prose" dangerouslySetInnerHTML={{__html: html}}/>
+        <Giscus/>
+      </>}
     </article>
   );
 }

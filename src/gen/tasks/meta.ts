@@ -1,8 +1,4 @@
-import { Feed } from 'feed';
-
-import { Article } from '../articles';
 import { Builder } from '../builder';
-import { CONFIG } from '../config';
 
 type HeaderRule = {
   paths: string[];
