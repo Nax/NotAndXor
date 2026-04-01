@@ -37,7 +37,7 @@ export async function build(builder: Builder, watchCallback?: () => void) {
   ]);
 
   const promises: Promise<unknown>[] = [];
-  const pageData: PageData = { favicons, title: CONFIG.siteName, css: { path: css.css, inline: css.inline }, meta: [], ld: [] };
+  const pageData: PageData = { favicons, title: CONFIG.siteName, css: css.name, meta: [], ld: [] };
 
   promises.push(buildBlogIndex(builder, articles, pageData));
   for (const a of articles) {

@@ -20,7 +20,7 @@ type PageDataMeta = {
 export type PageData = {
   favicons: Favicons;
   title: string;
-  css: { path: string, inline: string };
+  css: string;
   canonicalUrl?: string;
   meta: PageDataMeta[];
   ld: any[];

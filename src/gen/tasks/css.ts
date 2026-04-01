@@ -6,12 +6,11 @@ import { bundle, browserslistToTargets } from 'lightningcss';
 
 import { CONFIG } from '../config';
 import { Builder } from '../builder';
+import { OutputFile } from '../types';
 
 const targets = browserslistToTargets(browserslist());
 
 const depsMap = new Map<string, string>();
-const preloadedFonts = new Set<string>();
-
 const MIME_TYPES: Record<string, string> = {
   '.woff': 'font/woff',
   '.woff2': 'font/woff2',
@@ -19,11 +18,10 @@ const MIME_TYPES: Record<string, string> = {
   '.otf': 'font/otf',
 };
 
-async function bundleCss(builder: Builder, src: string) {
+export async function buildCss(builder: Builder): Promise<OutputFile> {
   const dirname = path.dirname(fileURLToPath(import.meta.url));
-  const rootDir = path.resolve(dirname, '../..');
-  const inputFile = path.resolve(path.join(rootDir, src));
-  console.log(inputFile);
+  const rootDir = path.resolve(dirname, '../../..');
+  const inputFile = path.resolve(path.join(dirname, '../../index.css'));
 
   const { dependencies, code } = await bundle({
     projectRoot: rootDir,
@@ -53,16 +51,5 @@ async function bundleCss(builder: Builder, src: string) {
     codeText = codeText.replaceAll(placeholder, '/' + outputPath);
   }
 
-  return codeText;
-}
-
-export async function buildCss(builder: Builder) {
-  const [css, inline] = await Promise.all([
-    bundleCss(builder, 'index.css'),
-    bundleCss(builder, 'index.inline.css'),
-  ]);
-
-  const cssOut = builder.emit({ name: CONFIG.dev ? 'app.css' : 'app.[hash].min.css', content: css, mimeType: 'text/css' });
-
-  return { css: cssOut.name, inline };
+  return builder.emit({ name: CONFIG.dev ? 'app.css' : 'app.[hash].min.css', content: codeText, mimeType: 'text/css' });
 }

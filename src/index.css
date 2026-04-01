@@ -1,8 +1,22 @@
+@import "../node_modules/@fontsource/martian-mono/latin-400.css";
+@import "../node_modules/@fontsource/inter/latin-400.css";
+@import "../node_modules/@fontsource/inter/latin-400-italic.css";
+@import "../node_modules/@fontsource/inter/latin-700.css";
+@import "../node_modules/@fontsource/inter/latin-700-italic.css";
+@import "../node_modules/@fontsource/source-serif-4/latin-400.css";
+@import "../node_modules/@fontsource/source-serif-4/latin-400-italic.css";
+@import "../node_modules/@fontsource/source-serif-4/latin-700.css";
+@import "../node_modules/@fontsource/source-serif-4/latin-700-italic.css";
+
 * {
   box-sizing: border-box;
 }
 
 :root {
+  --font-serif: "Source Serif 4", "Times", "Times New Roman", serif;
+  --font-sans:  "Inter", "Helvetica Neue", "Helvetica", "OpenSans", "Arial", sans-serif;
+  --font-mono:  "Martian Mono", "Courier New", "Courier", monospace;
+
   --color-bg: #f2f2f2;
   --color-fg: #141414;
 
@@ -83,8 +97,13 @@ article {
 }
 
 html {
+  font-family: var(--font-serif);
   background: var(--color-bg);
   color: var(--color-fg);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-sans);
 }
 
 main {
@@ -149,6 +168,7 @@ main {
 
 .small-caps {
   font-size: 0.75em;
+  font-family: var(--font-sans);
   font-variant-caps: petite-caps;
 }
 
@@ -161,6 +181,7 @@ figure {
 }
 
 code {
+  font-family: var(--font-mono);
   font-size: 0.7em;
   overflow-x: auto;
   padding: 0.1em 0.2em;
@@ -175,6 +196,7 @@ pre code {
 }
 
 .header h1 {
+  font-weight: lighter;
   font-variant: small-caps;
 }
 
@@ -193,6 +215,7 @@ pre code {
 }
 
 footer {
+  font-family: var(--font-sans);
   background: #111;
   color: white;
   text-align: center;
@@ -221,6 +244,10 @@ footer a {
   color: #ccc;
 }
 
+.article-header {
+  font-family: var(--font-sans);
+}
+
 .article {
   margin: 0 auto;
   max-width: 80ch;
@@ -237,6 +264,7 @@ footer a {
 }
 
 .article-header-title {
+  font-weight: bold;
   font-size: 150%;
   color: inherit;
   text-decoration: none;
@@ -244,4 +272,8 @@ footer a {
 
 .article-header-date {
   color: #444;
+}
+
+.article-header-description {
+  font-style: italic;
 }
