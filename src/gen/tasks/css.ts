@@ -6,11 +6,12 @@ import { bundle, browserslistToTargets } from 'lightningcss';
 
 import { CONFIG } from '../config';
 import { Builder } from '../builder';
-import { OutputFile } from '../types';
 
 const targets = browserslistToTargets(browserslist());
 
+const PRELOAD_FONTS_REGEX = /(inter|source-serif).*400-normal.*\.woff2$/;
 const depsMap = new Map<string, string>();
+const preloadedFonts = new Set<string>();
 const MIME_TYPES: Record<string, string> = {
   '.woff': 'font/woff',
   '.woff2': 'font/woff2',
@@ -18,7 +19,7 @@ const MIME_TYPES: Record<string, string> = {
   '.otf': 'font/otf',
 };
 
-export async function buildCss(builder: Builder): Promise<string> {
+export async function buildCss(builder: Builder) {
   const dirname = path.dirname(fileURLToPath(import.meta.url));
   const rootDir = path.resolve(dirname, '../../..');
   const inputFile = path.resolve(path.join(dirname, '../../index.css'));
@@ -43,6 +44,10 @@ export async function buildCss(builder: Builder): Promise<string> {
     const outputFilePath = ['fonts/', CONFIG.dev ? path.basename(filePath) : '[hash]' + ext].join('');
     const outputFile = builder.emit({ name: outputFilePath, content, mimeType });
     depsMap.set(key, outputFile.name);
+
+    if (PRELOAD_FONTS_REGEX.test(filePath)) {
+      preloadedFonts.add(outputFile.name);
+    }
   }));
 
   /* Replace the placeholders */
@@ -51,5 +56,5 @@ export async function buildCss(builder: Builder): Promise<string> {
     codeText = codeText.replaceAll(placeholder, '/' + outputPath);
   }
 
-  return codeText;
+  return { css: codeText, fonts: Array.from(preloadedFonts) };
 }

@@ -27,6 +27,12 @@
   --color-cyan:       hsl(215, 80%, 40%);
 }
 
+html {
+  font-family: var(--font-serif);
+  background: var(--color-bg);
+  color: var(--color-fg);
+}
+
 body {
   margin: 0;
   display: flex;
@@ -94,12 +100,6 @@ article {
     text-align: justify;
     margin-bottom: 2em;
   }
-}
-
-html {
-  font-family: var(--font-serif);
-  background: var(--color-bg);
-  color: var(--color-fg);
 }
 
 h1, h2, h3, h4, h5, h6 {
