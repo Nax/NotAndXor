@@ -25,7 +25,7 @@ const HEADER_RULES: HeaderRule[] = [
   },
   {
     paths: [
-      '/*.html',
+      '/*.html', '/*',
     ],
     headers: {
       'Cache-Control': ['public', 'max-age=300'],
