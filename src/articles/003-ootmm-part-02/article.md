@@ -1,6 +1,6 @@
 ---
-title: "Making a combo randomizer part 02"
-description: "Emulating the Nintendo 64 boot process on the Nintendo 64"
+title: "Re-entry of the Nintendo 64 boot process"
+description: "OoTMM - part 02"
 slug: ootmm-part-02
 created_at: 2025-09-18
 tags: [Nintendo-64, MIPS, OoTMM]

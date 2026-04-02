@@ -1,6 +1,6 @@
 ---
-title: "Making a combo randomizer part 01"
-description: "An introduction to the OoTMM project"
+title: "How to make a combo randomizer"
+description: "OoTMM - part 01"
 slug: ootmm-part-01
 created_at: 2023-08-19
 tags: [Nintendo-64, MIPS, OoTMM]
