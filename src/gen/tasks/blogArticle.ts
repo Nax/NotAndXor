@@ -124,7 +124,7 @@ export async function buildBlogArticle(builder: Builder, article: Article, pageD
     "inLanguage": "en-US",
   });
 
-  const body = await article.body(assetsMap);
+  const body = await article.body();
   const data = renderHtml(PageArticle, { article, assets, body }, pageData);
   return builder.emit({ name: `${article.slug}/index.html`, content: data, mimeType: 'text/html' });
 }

@@ -50,9 +50,8 @@ const rehypeNotes: Plugin<[], Root> = () => (tree) => {
   });
 };
 
-export async function articleBody(content: string, assets: Map<string, Asset>) {
-  const file = new VFile({ value: content, data: { assets } });
-  const data = await mdxEval(file, {
+export async function articleBody(content: string) {
+  const data = await mdxEval(content, {
     remarkPlugins: [remarkMath],
     rehypePlugins: [[rehypePrettyCode, { defaultLang: 'plaintext', theme: 'dark-plus' }], rehypeMathJaxSvg, rehypeNotes],
     Fragment,

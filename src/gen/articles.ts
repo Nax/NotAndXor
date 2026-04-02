@@ -16,7 +16,7 @@ export type Article = {
   updatedAt: Date;
   tags: string[];
   draft: boolean;
-  body: (assets: Map<string, Asset>) => Promise<JSX.Element>;
+  body: () => Promise<JSX.Element>;
 };
 
 async function makeArticle(dir: string): Promise<Article> {
@@ -34,7 +34,7 @@ async function makeArticle(dir: string): Promise<Article> {
   const tags = data.tags ?? [];
   const draft = data.draft ?? false;
 
-  const body = (assets: Map<string, Asset>) => articleBody(content, assets);
+  const body = () => articleBody(content);
 
   return { dir: fullDir, title, description, slug, createdAt, updatedAt, tags, draft, body };
 }
