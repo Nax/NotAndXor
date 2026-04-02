@@ -94,7 +94,6 @@ async function articleAssets(builder: Builder, article: Article): Promise<Asset[
 
 export async function buildBlogArticle(builder: Builder, article: Article, pageData: PageData): Promise<OutputFile> {
   const assets = (await articleAssets(builder, article)).map(x => ({ ...x, path: '/' + x.path }));
-  const assetsMap = new Map(assets.map(a => [a.source!, { ...a, path: '/' + a.path }]));
   const canonicalUrl = CONFIG.baseUrl + '/' + article.slug;
 
   pageData = cloneDeep(pageData);
