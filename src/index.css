@@ -61,7 +61,7 @@ ul, ol {
   margin-bottom: 4rem;
 }
 
-.prose aside {
+.note {
   color: var(--color-gray);
 }
 
@@ -79,7 +79,7 @@ article {
     flex-direction: column;
   }
 
-  .prose aside {
+  .note {
     order: 1;
     margin-top: 2rem;
   }
@@ -91,7 +91,7 @@ article {
     margin-right: 100px;
   }
 
-  .prose aside {
+  .note {
     margin-right: -260px;
     width: 200px;
     float: right;

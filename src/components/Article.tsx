@@ -1,14 +1,14 @@
-import { ComponentChildren } from 'preact';
+import { ComponentChildren, JSX } from 'preact';
 
 import { Article as ArticleData } from '../gen/articles';
 import { Giscus } from './Giscus';
 
 type ArticleProps = {
   article: ArticleData;
-  html?: string;
+  body?: JSX.Element;
 }
-export function Article({ article, html }: ArticleProps) {
-  const isPreview = !html;
+export function Article({ article, body }: ArticleProps) {
+  const isPreview = !body;
   const date = article.createdAt.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
 
   const LinkWrapper = ({children}: {children: ComponentChildren}) => isPreview ? <a href={`/${article.slug}`}>{children}</a> : children;
@@ -29,7 +29,9 @@ export function Article({ article, html }: ArticleProps) {
         </LinkWrapper>
       </header>
       {!isPreview && <>
-        <div class="article-body prose" dangerouslySetInnerHTML={{__html: html}}/>
+        <div class="article-body prose">
+          {body}
+        </div>
         <Giscus/>
       </>}
     </article>

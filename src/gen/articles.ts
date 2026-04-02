@@ -2,9 +2,10 @@ import path from 'node:path';
 import fs from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import matter from 'gray-matter';
-import { articleHtml } from './parser';
+import { articleBody } from './articles/parser';
 import { CONFIG } from './config';
 import { Asset } from './types';
+import { JSX } from 'preact/jsx-runtime';
 
 export type Article = {
   dir: string;
@@ -15,13 +16,13 @@ export type Article = {
   updatedAt: Date;
   tags: string[];
   draft: boolean;
-  html: (assets: Map<string, Asset>) => Promise<string>;
+  body: (assets: Map<string, Asset>) => Promise<JSX.Element>;
 };
 
 async function makeArticle(dir: string): Promise<Article> {
   const dirname = path.dirname(fileURLToPath(import.meta.url));
   const fullDir = path.resolve(dirname, '..', dir);
-  const file = path.resolve(fullDir, 'article.md');
+  const file = path.resolve(fullDir, 'article.mdx');
   const fileData = await fs.readFile(file, 'utf-8');
   const { data, content } = matter(fileData);
 
@@ -33,9 +34,9 @@ async function makeArticle(dir: string): Promise<Article> {
   const tags = data.tags ?? [];
   const draft = data.draft ?? false;
 
-  const html = (assets: Map<string, Asset>) => articleHtml(content, assets);
+  const body = (assets: Map<string, Asset>) => articleBody(content, assets);
 
-  return { dir: fullDir, title, description, slug, createdAt, updatedAt, tags, draft, html };
+  return { dir: fullDir, title, description, slug, createdAt, updatedAt, tags, draft, body };
 }
 
 export async function getArticles(): Promise<Article[]> {

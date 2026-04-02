@@ -93,7 +93,7 @@ async function articleAssets(builder: Builder, article: Article): Promise<Asset[
 }
 
 export async function buildBlogArticle(builder: Builder, article: Article, pageData: PageData): Promise<OutputFile> {
-  const assets = await articleAssets(builder, article);
+  const assets = (await articleAssets(builder, article)).map(x => ({ ...x, path: '/' + x.path }));
   const assetsMap = new Map(assets.map(a => [a.source!, { ...a, path: '/' + a.path }]));
   const canonicalUrl = CONFIG.baseUrl + '/' + article.slug;
 
@@ -124,7 +124,7 @@ export async function buildBlogArticle(builder: Builder, article: Article, pageD
     "inLanguage": "en-US",
   });
 
-  const html = await article.html(assetsMap);
-  const data = renderHtml(PageArticle, { article, html }, pageData);
+  const body = await article.body(assetsMap);
+  const data = renderHtml(PageArticle, { article, assets, body }, pageData);
   return builder.emit({ name: `${article.slug}/index.html`, content: data, mimeType: 'text/html' });
 }

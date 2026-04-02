@@ -52,7 +52,7 @@ export async function build(builder: Builder, watchCallback?: () => void) {
   if (CONFIG.dev) {
     watch('index.css', () => { buildCss(builder).then(watchCallback); });
     for (const a of articles) {
-      watch(a.dir + '/article.md', async () => {
+      watch(a.dir + '/article.mdx', async () => {
         const newArticles = await getArticles();
         articles.splice(0, articles.length, ...newArticles);
         const newA = newArticles.find(x => x.dir === a.dir);
