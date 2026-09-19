@@ -4,7 +4,6 @@ import { fileURLToPath } from 'node:url';
 import matter from 'gray-matter';
 import { articleBody } from './articles/parser';
 import { CONFIG } from './config';
-import { Asset } from './types';
 import { JSX } from 'preact/jsx-runtime';
 
 export type Article = {

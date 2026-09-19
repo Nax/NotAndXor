@@ -1,9 +1,6 @@
 import type { Plugin } from 'unified';
 import type { Root } from 'hast';
 
-import type { Asset } from '../types';
-
-import { VFile } from 'vfile';
 import { evaluate as mdxEval } from '@mdx-js/mdx';
 import { Fragment, jsx, jsxs } from 'preact/jsx-runtime';
 import remarkMath from 'remark-math';

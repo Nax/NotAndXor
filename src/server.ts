@@ -14,7 +14,8 @@ async function devServer() {
 
   /* Run the dev server */
   const server = http.createServer((req, res) => {
-    const pathComponents = req.url?.split('/').filter(c => c.length > 0) || [];
+    const url = new URL(req.url!, 'http://localhost');
+    const pathComponents = url.pathname.split('/').filter(c => c.length > 0) || [];
     let paths: string[];
     if (pathComponents.length === 0) {
       paths = ['index.html'];
