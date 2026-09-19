@@ -26,11 +26,13 @@ function emitAsset(builder: Builder, article: Article, name: string, content: Bu
 }
 
 async function convertWebp(key: string, content: Buffer): Promise<Buffer> {
-  return cache(`webp:${key}`, () => sharp(content).webp({ quality: 80 }).toBuffer());
+  const quality = 80;
+  return cache(`webp:q${quality}:${key}`, () => sharp(content).webp({ quality }).toBuffer());
 }
 
 async function convertAvif(key: string, content: Buffer): Promise<Buffer> {
-  return cache(`avif:${key}`, () => sharp(content).avif({ quality: 50 }).toBuffer());
+  const quality = 65;
+  return cache(`avif:q${quality}:${key}`, () => sharp(content).avif({ quality }).toBuffer());
 }
 
 async function imageAssets(builder: Builder, article: Article): Promise<Asset[]> {
