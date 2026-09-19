@@ -78,7 +78,6 @@ export function Layout({ data, children }: LayoutProps) {
         {data.ld.map((ldItem, i) => (
           <script key={i} type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(ldItem) }}/>
         ))}
-        <script async src="https://scripts.simpleanalyticscdn.com/latest.js"/>
       </body>
     </html>
   );
