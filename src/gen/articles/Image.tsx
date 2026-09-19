@@ -23,7 +23,7 @@ export function Image({ src, alt }: ImageProps) {
     <picture>
       {assetAvif && assetAvif.type === 'image' && <source srcSet={assetAvif.path} type="image/avif"/>}
       {assetWebp && assetWebp.type === 'image' && <source srcSet={assetWebp.path} type="image/webp"/>}
-      <img src={resolvedSrc} width={width} height={height} alt={alt}/>
+      <img src={resolvedSrc} width={width} height={height} alt={alt} loading="lazy"/>
     </picture>
   );
 }
